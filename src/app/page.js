@@ -1,104 +1,213 @@
 "use client";
 import { useState, useEffect, useRef } from 'react';
 
+// --- VISUAL & AUDIO CONSTANTS ---
+const INTRO_TEXT = "Welcome to the command group.\n\nOur nation has just noted a novel infection.\n\nYou are recruited to guide the decision makers.\n\nStay prepared to lead from the shadows.";
+
 export default function Home() {
-  const [input, setInput] = useState("");
+  // --- STATE MANAGEMENT ---
+  const [gameStarted, setGameStarted] = useState(false);
+  const [introDone, setIntroDone] = useState(false);
   const [loading, setLoading] = useState(false);
   
-  // Game State (Now managed by React, updated by Python)
-  const [stats, setStats] = useState({ 
-    pop: 100, trust: 70, eco: 80, inf: 5, load: 10 
-  });
-  
-  const [terminalLogs, setTerminalLogs] = useState([
-    "SYS.OP.2025 INITIALIZED...", 
-    "CONNECTION TO PENTAGON SERVER: ESTABLISHED",
-    "AWAITING INPUT..."
-  ]);
-  
+  // Game Data
+  const [stats, setStats] = useState({ pop: 100, trust: 70, eco: 80, inf: 5, load: 10 });
+  const [terminalLogs, setTerminalLogs] = useState([]); // Array of {text, isTypewriter}
+  const [currentChoices, setCurrentChoices] = useState([]);
+  const [input, setInput] = useState("");
+
+  // Refs for scrolling and audio
   const terminalRef = useRef(null);
+  const audioRef = useRef({ bgm: null, type: null });
 
-  // Auto-scroll terminal
+  // --- AUDIO SETUP ---
   useEffect(() => {
-    if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-    }
-  }, [terminalLogs]);
+    audioRef.current.bgm = document.getElementById('bgm');
+    audioRef.current.type = document.getElementById('sfx-typewriter');
+  }, []);
 
-  // --- THE BRIDGE TO PYTHON ---
-  const processTurn = async () => {
+  const playTypeSound = () => {
+    if (audioRef.current.type) {
+      audioRef.current.type.currentTime = 0;
+      audioRef.current.type.play().catch(() => {});
+    }
+  };
+
+  // --- TYPEWRITER EFFECT COMPONENT ---
+  const TypewriterLog = ({ text, onComplete }) => {
+    const [display, setDisplay] = useState("");
+    
+    useEffect(() => {
+      let i = 0;
+      playTypeSound();
+      const interval = setInterval(() => {
+        setDisplay(text.substring(0, i + 1));
+        i++;
+        if (i === text.length) {
+          clearInterval(interval);
+          if (onComplete) onComplete();
+        }
+        // Auto-scroll
+        if (terminalRef.current) terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+      }, 15); // Speed of typing
+      return () => clearInterval(interval);
+    }, [text]);
+
+    return <div style={{marginBottom: '15px', whiteSpace: 'pre-wrap'}}>{display}</div>;
+  };
+
+  // --- INTRO SEQUENCE ---
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+        const el = document.getElementById('intro-text');
+        if (el) {
+            el.innerText = INTRO_TEXT.substring(0, i);
+            i++;
+            if (i > INTRO_TEXT.length) {
+                clearInterval(interval);
+                setIntroDone(true);
+            }
+        }
+    }, 30);
+    return () => clearInterval(interval);
+  }, []);
+
+  const initializeGame = () => {
+    // Start Audio
+    if (audioRef.current.bgm) {
+        audioRef.current.bgm.volume = 0.5;
+        audioRef.current.bgm.play().catch(e => console.log("Audio blocked"));
+    }
+    setGameStarted(true);
+    // Fetch Day 1 Content
+    processTurn(null, true); 
+  };
+
+  // --- GAME LOGIC BRIDGE ---
+  const processTurn = async (choiceIndex = null, isInit = false) => {
     if (loading) return;
     setLoading(true);
 
-    // 1. Add user command to log
-    const command = input || "SKIP DAY";
-    setTerminalLogs(prev => [...prev, `>> ${command}`, "PROCESSING SIMULATION..."]);
-    setInput("");
+    // If player made a choice, show it in log
+    if (choiceIndex !== null) {
+        const choiceText = currentChoices[choiceIndex]?.text || "UNKNOWN COMMAND";
+        setTerminalLogs(prev => [...prev, { text: `>> ACTION: ${choiceText}`, type: 'instant' }]);
+    }
 
     try {
-      // 2. Send current stats to Python Backend
+      // Send payload to Python
+      const payload = {
+        stats: stats,
+        choice: choiceIndex, // 0 or 1
+        is_init: isInit
+      };
+
       const res = await fetch('/api/simulate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(stats),
+        body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error("SERVER CONNECTION LOST");
+      if (!res.ok) throw new Error("UPLINK FAILED");
+      const data = await res.json();
 
-      const newStats = await res.json();
-
-      // 3. Update UI with Python's calculation
-      setStats(prev => ({
-        ...prev,
-        inf: newStats.inf,
-        eco: newStats.eco,
-        trust: newStats.trust,
-        load: newStats.load
-      }));
-
-      setTerminalLogs(prev => [...prev, newStats.message]);
+      // Update Stats
+      setStats(data.stats);
+      setCurrentChoices(data.choices);
+      
+      // Add Narrative to Log (Trigger Typewriter)
+      setTerminalLogs(prev => [...prev, { text: data.narrative, type: 'typewriter' }]);
 
     } catch (error) {
-      setTerminalLogs(prev => [...prev, "ERROR: UPLINK FAILED."]);
+      setTerminalLogs(prev => [...prev, { text: "ERROR: CONNECTION TO MAINFRAME LOST.", type: 'instant' }]);
     }
-    
     setLoading(false);
   };
 
+  // --- INPUT HANDLING ---
+  const handleInput = () => {
+    const val = parseInt(input);
+    if (!isNaN(val) && val > 0 && val <= currentChoices.length) {
+        processTurn(val - 1);
+        setInput("");
+    } else {
+        setTerminalLogs(prev => [...prev, { text: ">> INVALID PARAMETER", type: 'instant' }]);
+        setInput("");
+    }
+  };
+
+  // --- RENDER ---
   return (
     <main className={`container ${stats.inf > 70 ? 'critical' : ''}`}>
+      
+      {/* LOADING OVERLAY */}
+      {!gameStarted && (
+        <div id="loading-overlay" style={{
+            position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+            background: '#000', zIndex: 5000, display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center'
+        }}>
+            <div id="intro-text" style={{maxWidth: '600px', whiteSpace: 'pre-wrap', color: '#ccc', marginBottom: '30px', minHeight: '150px'}}></div>
+            <button 
+                id="enter-btn"
+                onClick={initializeGame}
+                style={{
+                    opacity: introDone ? 1 : 0, 
+                    pointerEvents: introDone ? 'auto' : 'none',
+                    background: 'transparent', color: '#4af626', border: '2px solid #4af626',
+                    padding: '20px 60px', fontSize: '1.5rem', cursor: 'pointer', transition: 'opacity 1s'
+                }}
+            >
+                INITIALIZE PROTOCOLS
+            </button>
+        </div>
+      )}
+
+      {/* MAIN GAME UI */}
       <div className="system-header">
         <span>SYS.OP.2025</span>
         <span className="blink">ONLINE</span>
       </div>
 
       <div className="terminal" ref={terminalRef}>
-        {terminalLogs.map((line, i) => (
-          <div key={i} style={{marginBottom: '10px', whiteSpace: 'pre-wrap'}}>{line}</div>
+        {terminalLogs.map((log, i) => (
+            log.type === 'typewriter' && i === terminalLogs.length - 1 
+            ? <TypewriterLog key={i} text={log.text} />
+            : <div key={i} style={{marginBottom: '15px', whiteSpace: 'pre-wrap'}}>{log.text}</div>
         ))}
         {loading && <div className="blink">CALCULATING PROJECTIONS...</div>}
+        
+        {/* Helper to show available choices in the terminal log area */}
+        {!loading && currentChoices.length > 0 && (
+            <div style={{marginTop: '20px', borderTop: '1px dashed #333', paddingTop: '10px'}}>
+                {currentChoices.map((c, i) => (
+                    <div key={i}>[{i+1}] {c.text}</div>
+                ))}
+            </div>
+        )}
       </div>
 
       <div className="input-row">
         <input 
-          type="text" 
-          placeholder=">> ENTER COMMAND" 
+          type="number" 
+          placeholder=">> AWAITING INTEGER INPUT" 
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && processTurn()}
-          disabled={loading}
+          onKeyDown={(e) => e.key === 'Enter' && handleInput()}
+          disabled={loading || currentChoices.length === 0}
         />
-        <button onClick={processTurn} disabled={loading}>
-          {loading ? "..." : "EXECUTE"}
+        <button onClick={handleInput} disabled={loading || currentChoices.length === 0}>
+          EXECUTE
         </button>
       </div>
 
       <footer>
         <p>POP: {stats.pop}% | TRUST: {stats.trust}% | INF: {stats.inf}% | ECO: {stats.eco}%</p>
-        <p>Decisions are final. History is watching.</p>
       </footer>
       
       <audio id="bgm" loop><source src="/Audio/bgm.mp3" type="audio/mpeg" /></audio>
+      <audio id="sfx-typewriter"><source src="/Audio/typewriter.mp3" type="audio/mpeg" /></audio>
     </main>
   );
 }
