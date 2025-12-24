@@ -1,162 +1,111 @@
-/* =========================================
-   1. GLOBAL THEME & VARIABLES
-   ========================================= */
+/* src/app/globals.css */
 :root {
-  --bg-body: #020402;            /* Deep Black-Green */
-  --bg-terminal: rgba(10, 20, 15, 0.85);
-  
-  --text-main: #4af626;          /* Phosphor Green */
-  --text-dim: #225f19;
-  --text-alert: #ff2a2a;         /* Warning Red */
-  
+  --bg-body: #020402;
+  --bg-terminal: rgba(10, 20, 15, 0.95);
+  --text-main: #4af626;
+  --text-dim: #1b4f12;
+  --text-alert: #ff2a2a;
   --accent: #4af626;
-  --accent-glow: rgba(74, 246, 38, 0.6);
-  --alert-glow: rgba(255, 42, 42, 0.6);
-  
-  --font-stack: 'Share Tech Mono', monospace; /* Will be mapped by Next.js */
-  
-  /* CRT Effects */
-  --scanline-color: rgba(0, 0, 0, 0.5);
-  --glass-border: 1px solid rgba(74, 246, 38, 0.3);
+  --accent-glow: rgba(74, 246, 38, 0.8);
 }
 
 * { box-sizing: border-box; }
 
 body {
-  margin: 0;
-  padding: 0;
+  margin: 0; padding: 0;
   background-color: var(--bg-body);
   color: var(--text-main);
   height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   overflow: hidden;
-  text-shadow: 0 0 4px var(--accent-glow); 
+  font-family: 'Share Tech Mono', monospace; /* Fallback */
 }
 
-/* =========================================
-   2. CRT SCREEN EFFECTS
-   ========================================= */
-.screen-effects {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  pointer-events: none;
-  z-index: 99999;
-}
-
+/* --- CRT EFFECTS --- */
+.screen-effects { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
 .scanlines {
   width: 100%; height: 100%;
-  background: linear-gradient(
-    to bottom,
-    rgba(255,255,255,0),
-    rgba(255,255,255,0) 50%,
-    rgba(0,0,0,0.2) 50%,
-    rgba(0,0,0,0.2)
-  );
-  background-size: 100% 4px;
-  position: absolute;
-  top: 0; left: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+  background-size: 100% 4px; position: absolute;
 }
-
 .vignette {
-  width: 100%; height: 100%;
-  position: absolute;
-  top: 0; left: 0;
-  background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.8) 100%);
+  width: 100%; height: 100%; position: absolute;
+  background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,1) 100%);
 }
 
-.noise {
-    /* Optional noise effect if you have the asset, otherwise keep empty or use CSS noise */
-}
-
-/* =========================================
-   3. INTRO & LOADING
-   ========================================= */
-/* (Keeping your CSS exactly as is, just ensuring the body tag matches Next.js needs above) */
-
+/* --- GAME CONTAINER --- */
 .container {
   width: 100%; max-width: 900px; height: 95vh;
   display: flex; flex-direction: column;
-  padding: 20px;
-  position: relative;
-  z-index: 100;
+  padding: 20px; position: relative; z-index: 100;
 }
 
 .system-header {
-  display: flex; justify-content: space-between;
-  border-bottom: 1px solid var(--accent);
-  padding-bottom: 5px; margin-bottom: 10px;
-  font-size: 0.8rem;
-  opacity: 0.7;
+  display: flex; justify-content: space-between; border-bottom: 2px solid var(--accent);
+  padding-bottom: 5px; margin-bottom: 10px; font-size: 0.9rem; letter-spacing: 2px;
 }
 
 .terminal {
-  flex: 1;
-  background-color: var(--bg-terminal);
+  flex: 1; background-color: var(--bg-terminal);
   border: 1px solid var(--accent);
-  border-radius: 4px;
-  padding: 25px;
-  overflow-y: auto;
-  font-size: 1.1rem;
-  line-height: 1.4;
-  box-shadow: 0 0 20px rgba(74, 246, 38, 0.1);
+  padding: 25px; overflow-y: auto;
+  font-size: 1.1rem; line-height: 1.5;
+  box-shadow: 0 0 15px rgba(74, 246, 38, 0.2);
 }
 
-/* Scrollbar Styling */
+/* SCROLLBAR */
 .terminal::-webkit-scrollbar { width: 8px; }
-.terminal::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+.terminal::-webkit-scrollbar-thumb { background: var(--accent); }
 .terminal::-webkit-scrollbar-track { background: #000; }
 
-.input-row {
-  margin-top: 20px;
-  display: flex; gap: 15px; height: 55px;
-}
-
+/* --- INPUT AREA --- */
+.input-row { margin-top: 20px; display: flex; gap: 15px; height: 55px; }
 input {
-  flex: 1;
-  background: rgba(0,0,0,0.5);
-  border: 1px solid var(--accent);
-  color: var(--accent);
-  font-family: inherit; /* Inherits Share Tech Mono */
-  font-size: 1.2rem;
-  padding: 0 20px;
-  outline: none;
-  text-transform: uppercase;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  flex: 1; background: #000; border: 1px solid var(--accent);
+  color: var(--accent); font-family: inherit; font-size: 1.2rem;
+  padding: 0 20px; outline: none; text-transform: uppercase;
 }
-
-input:focus {
-  box-shadow: 0 0 15px var(--accent-glow);
-  background: rgba(0,20,0,0.8);
-}
+input:focus { box-shadow: 0 0 15px var(--accent-glow); }
 
 button {
-  background-color: var(--accent);
-  color: #000;
-  border: none;
-  font-family: inherit;
-  font-weight: bold;
-  font-size: 1.1rem;
-  padding: 0 30px;
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: all 0.2s;
-  box-shadow: 0 0 10px var(--accent-glow);
+  background-color: var(--accent); color: #000; border: none;
+  font-weight: bold; font-size: 1.1rem; padding: 0 30px; cursor: pointer;
 }
+button:hover:not(:disabled) { box-shadow: 0 0 20px var(--accent); }
+button:disabled { opacity: 0.3; cursor: not-allowed; background-color: var(--text-dim); }
 
-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 0 20px var(--accent);
-}
-
+/* --- STATS FOOTER (GLOWING) --- */
 footer {
-  margin-top: 15px;
-  text-align: center;
-  color: var(--text-dim);
-  font-size: 0.8rem;
-  opacity: 0.7;
+  margin-top: 20px; display: flex; justify-content: space-between;
+  border-top: 1px solid var(--text-dim); padding-top: 15px;
+}
+.stat-box { font-size: 1rem; color: var(--text-dim); }
+.stat-val {
+  color: #fff; font-weight: bold; margin-left: 5px;
+  text-shadow: 0 0 8px var(--accent); /* THE GLOW */
 }
 
-.blink { animation: blink 1s infinite; }
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+/* --- INTRO SCREEN STYLES --- */
+.intro-container {
+  max-width: 700px; font-size: 1.3rem; line-height: 1.6;
+  white-space: pre-wrap; color: #ccc; min-height: 200px;
+}
+.intro-highlight {
+  color: var(--accent);
+  text-shadow: 0 0 10px var(--accent);
+}
+
+/* BLINKING CURSOR */
+.cursor::after {
+  content: '█'; animation: blink 1s step-end infinite;
+  margin-left: 5px; color: var(--accent);
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* BUTTON GLOW ANIMATION */
+.glow-btn { animation: pulse-green 2s infinite; }
+@keyframes pulse-green {
+  0% { box-shadow: 0 0 0 0 rgba(74, 246, 38, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(74, 246, 38, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(74, 246, 38, 0); }
+}
