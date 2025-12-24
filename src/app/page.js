@@ -12,11 +12,11 @@ export default function Home() {
   
   // Game Data
   const [stats, setStats] = useState({ pop: 100, trust: 70, eco: 80, inf: 5, load: 10 });
-  const [terminalLogs, setTerminalLogs] = useState([]); // Array of {text, isTypewriter}
+  const [terminalLogs, setTerminalLogs] = useState([]); 
   const [currentChoices, setCurrentChoices] = useState([]);
+  const [currentEventId, setCurrentEventId] = useState(null); // NEW: Track Event ID
   const [input, setInput] = useState("");
 
-  // Refs for scrolling and audio
   const terminalRef = useRef(null);
   const audioRef = useRef({ bgm: null, type: null });
 
@@ -33,10 +33,9 @@ export default function Home() {
     }
   };
 
-  // --- TYPEWRITER EFFECT COMPONENT ---
+  // --- TYPEWRITER EFFECT ---
   const TypewriterLog = ({ text, onComplete }) => {
     const [display, setDisplay] = useState("");
-    
     useEffect(() => {
       let i = 0;
       playTypeSound();
@@ -47,12 +46,10 @@ export default function Home() {
           clearInterval(interval);
           if (onComplete) onComplete();
         }
-        // Auto-scroll
         if (terminalRef.current) terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-      }, 15); // Speed of typing
+      }, 10); // Faster typing for better UX
       return () => clearInterval(interval);
     }, [text]);
-
     return <div style={{marginBottom: '15px', whiteSpace: 'pre-wrap'}}>{display}</div>;
   };
 
@@ -74,13 +71,11 @@ export default function Home() {
   }, []);
 
   const initializeGame = () => {
-    // Start Audio
     if (audioRef.current.bgm) {
         audioRef.current.bgm.volume = 0.5;
         audioRef.current.bgm.play().catch(e => console.log("Audio blocked"));
     }
     setGameStarted(true);
-    // Fetch Day 1 Content
     processTurn(null, true); 
   };
 
@@ -89,17 +84,16 @@ export default function Home() {
     if (loading) return;
     setLoading(true);
 
-    // If player made a choice, show it in log
     if (choiceIndex !== null) {
         const choiceText = currentChoices[choiceIndex]?.text || "UNKNOWN COMMAND";
         setTerminalLogs(prev => [...prev, { text: `>> ACTION: ${choiceText}`, type: 'instant' }]);
     }
 
     try {
-      // Send payload to Python
       const payload = {
         stats: stats,
-        choice: choiceIndex, // 0 or 1
+        choice_index: choiceIndex, // Which button they clicked (0, 1, 2...)
+        last_event_id: currentEventId, // NEW: Tell server what we just played
         is_init: isInit
       };
 
@@ -112,11 +106,10 @@ export default function Home() {
       if (!res.ok) throw new Error("UPLINK FAILED");
       const data = await res.json();
 
-      // Update Stats
       setStats(data.stats);
       setCurrentChoices(data.choices);
+      setCurrentEventId(data.event_id); // NEW: Store the new event ID
       
-      // Add Narrative to Log (Trigger Typewriter)
       setTerminalLogs(prev => [...prev, { text: data.narrative, type: 'typewriter' }]);
 
     } catch (error) {
@@ -137,11 +130,8 @@ export default function Home() {
     }
   };
 
-  // --- RENDER ---
   return (
     <main className={`container ${stats.inf > 70 ? 'critical' : ''}`}>
-      
-      {/* LOADING OVERLAY */}
       {!gameStarted && (
         <div id="loading-overlay" style={{
             position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
@@ -164,7 +154,6 @@ export default function Home() {
         </div>
       )}
 
-      {/* MAIN GAME UI */}
       <div className="system-header">
         <span>SYS.OP.2025</span>
         <span className="blink">ONLINE</span>
@@ -178,11 +167,11 @@ export default function Home() {
         ))}
         {loading && <div className="blink">CALCULATING PROJECTIONS...</div>}
         
-        {/* Helper to show available choices in the terminal log area */}
+        {/* Dynamic Choice List (Handles 2, 3, or 4 options) */}
         {!loading && currentChoices.length > 0 && (
             <div style={{marginTop: '20px', borderTop: '1px dashed #333', paddingTop: '10px'}}>
                 {currentChoices.map((c, i) => (
-                    <div key={i}>[{i+1}] {c.text}</div>
+                    <div key={i} style={{marginBottom: '5px'}}>[{i+1}] {c.text}</div>
                 ))}
             </div>
         )}
@@ -203,7 +192,7 @@ export default function Home() {
       </div>
 
       <footer>
-        <p>POP: {stats.pop}% | TRUST: {stats.trust}% | INF: {stats.inf}% | ECO: {stats.eco}%</p>
+        <p>POP: {stats.pop}% | TRUST: {stats.trust}% | INF: {stats.inf}% | ECO: {stats.eco}% | CURE: {stats.cure || 0}%</p>
       </footer>
       
       <audio id="bgm" loop><source src="/Audio/bgm.mp3" type="audio/mpeg" /></audio>
