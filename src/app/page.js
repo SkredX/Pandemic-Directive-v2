@@ -5,8 +5,7 @@ const INTRO_PART_1 = "Welcome to the command group.\n\nOur nation has just noted
 const INTRO_PART_2 = "Stay prepared to lead from the shadows.";
 
 // --- 1. EXTERNAL COMPONENT (STABLE) ---
-// Moving this OUTSIDE the main function prevents it from refreshing when you type.
-const TerminalEntry = memo(({ entry, isLast, onType, onScroll }) => {
+const TerminalEntry = memo(({ entry, isLast, onScroll }) => {
     const [displayedText, setDisplayedText] = useState(entry.type === 'typewriter' && isLast ? "" : entry.text);
     const hasRun = useRef(false);
 
@@ -17,25 +16,37 @@ const TerminalEntry = memo(({ entry, isLast, onType, onScroll }) => {
             return;
         }
 
-        // Prevent re-running if already ran
         if (hasRun.current) return;
         hasRun.current = true;
+
+        // --- AUDIO START ---
+        const sfx = document.getElementById('sfx-typewriter');
+        if (sfx) {
+            sfx.currentTime = 0;
+            sfx.loop = true; // Loop the sound smoothly
+            sfx.play().catch(() => {});
+        }
 
         let i = 0;
         const interval = setInterval(() => {
             setDisplayedText(entry.text.substring(0, i+1));
-            onType(); // Play sound
-            onScroll(); // Auto scroll
+            onScroll(); 
             i++;
-            if (i === entry.text.length) clearInterval(interval);
-        }, 15);
-        return () => clearInterval(interval);
-    }, [entry, isLast, onType, onScroll]);
+            
+            // --- AUDIO STOP (When Finished) ---
+            if (i === entry.text.length) {
+                clearInterval(interval);
+                if (sfx) sfx.pause();
+            }
+        }, 15); // Speed of typing
 
-    // Determine if we should show choices
-    // We show choices if:
-    // 1. They exist
-    // 2. AND (It's an instant log OR the typewriter effect has finished)
+        // Cleanup if component unmounts mid-type
+        return () => {
+            clearInterval(interval);
+            if (sfx) sfx.pause();
+        };
+    }, [entry, isLast, onScroll]);
+
     const showChoices = entry.choices && (entry.type !== 'typewriter' || displayedText.length === entry.text.length);
 
     return (
@@ -74,13 +85,7 @@ export default function Home() {
   
   const [input, setInput] = useState("");
   const terminalRef = useRef(null);
-  const audioRef = useRef({ bgm: null, type: null });
-
-  // --- AUDIO HELPER ---
-  const playTypeSound = () => {
-    const sfx = audioRef.current.type;
-    if (sfx) { sfx.currentTime = 0; sfx.play().catch(() => {}); }
-  };
+  const audioRef = useRef({ bgm: null });
 
   const handleScroll = () => {
     if (terminalRef.current) {
@@ -88,10 +93,8 @@ export default function Home() {
     }
   };
 
-  // --- SETUP ---
   useEffect(() => {
     audioRef.current.bgm = document.getElementById('bgm');
-    audioRef.current.type = document.getElementById('sfx-typewriter');
   }, []);
 
   const bootSystem = () => {
@@ -100,14 +103,25 @@ export default function Home() {
   };
 
   const [introTextDisplay, setIntroTextDisplay] = useState("");
+  
   const startIntroTyping = () => {
     let fullText = INTRO_PART_1 + INTRO_PART_2;
     let i = 0;
+    
+    // --- INTRO AUDIO START ---
+    const sfx = document.getElementById('sfx-typewriter');
+    if (sfx) { sfx.currentTime = 0; sfx.loop = true; sfx.play().catch(() => {}); }
+
     const interval = setInterval(() => {
       setIntroTextDisplay(fullText.substring(0, i+1));
-      playTypeSound();
       i++;
-      if (i === fullText.length) { clearInterval(interval); setIntroStep(1); }
+      
+      if (i === fullText.length) { 
+          clearInterval(interval); 
+          setIntroStep(1); 
+          // --- INTRO AUDIO STOP ---
+          if (sfx) sfx.pause();
+      }
     }, 40);
   };
 
@@ -223,7 +237,6 @@ export default function Home() {
                 key={i} 
                 entry={log} 
                 isLast={i === terminalLogs.length - 1} 
-                onType={playTypeSound}
                 onScroll={handleScroll}
             />
         ))}
