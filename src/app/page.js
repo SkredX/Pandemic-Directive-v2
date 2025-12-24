@@ -1,95 +1,133 @@
 "use client";
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, memo } from 'react';
 
-// --- TEXT CONTENT ---
 const INTRO_PART_1 = "Welcome to the command group.\n\nOur nation has just noted a novel infection.\n\nYou are recruited to guide the decision makers.\n\n";
 const INTRO_PART_2 = "Stay prepared to lead from the shadows.";
 
+// --- 1. EXTERNAL COMPONENT (STABLE) ---
+// Moving this OUTSIDE the main function prevents it from refreshing when you type.
+const TerminalEntry = memo(({ entry, isLast, onType, onScroll }) => {
+    const [displayedText, setDisplayedText] = useState(entry.type === 'typewriter' && isLast ? "" : entry.text);
+    const hasRun = useRef(false);
+
+    useEffect(() => {
+        // Instant render for old logs or 'instant' type logs
+        if (entry.type === 'instant' || (entry.type === 'typewriter' && !isLast)) {
+            setDisplayedText(entry.text);
+            return;
+        }
+
+        // Prevent re-running if already ran
+        if (hasRun.current) return;
+        hasRun.current = true;
+
+        let i = 0;
+        const interval = setInterval(() => {
+            setDisplayedText(entry.text.substring(0, i+1));
+            onType(); // Play sound
+            onScroll(); // Auto scroll
+            i++;
+            if (i === entry.text.length) clearInterval(interval);
+        }, 15);
+        return () => clearInterval(interval);
+    }, [entry, isLast, onType, onScroll]);
+
+    // Determine if we should show choices
+    // We show choices if:
+    // 1. They exist
+    // 2. AND (It's an instant log OR the typewriter effect has finished)
+    const showChoices = entry.choices && (entry.type !== 'typewriter' || displayedText.length === entry.text.length);
+
+    return (
+        <div style={{marginBottom: '25px', borderBottom: '1px dashed #333', paddingBottom: '15px'}}>
+            <div style={{whiteSpace: 'pre-wrap', marginBottom: '15px'}}>{displayedText}</div>
+            
+            {showChoices && (
+                <div style={{color: '#fff'}}>
+                   {entry.choices.map((c, idx) => (
+                       <div key={idx} style={{marginBottom: '8px'}}>
+                           <span style={{color: '#4af626'}}>[{idx+1}]</span> {c.text}
+                       </div>
+                   ))} 
+                </div>
+            )}
+        </div>
+    );
+});
+
+TerminalEntry.displayName = "TerminalEntry";
+
+
+// --- 2. MAIN GAME COMPONENT ---
 export default function Home() {
-  // --- STATES ---
-  const [booted, setBooted] = useState(false);       // Has user clicked "BOOT SYSTEM"?
-  const [introStep, setIntroStep] = useState(0);     // 0=Typing, 1=Done
+  const [booted, setBooted] = useState(false);
+  const [introStep, setIntroStep] = useState(0);
   const [gameStarted, setGameStarted] = useState(false);
   const [loading, setLoading] = useState(false);
   
-  // Game Data
-  const [stats, setStats] = useState({ pop: 100, trust: 70, eco: 80, inf: 5, cure: 0 });
+  // Game State
+  const [stats, setStats] = useState({ day: 1, pop: 100, trust: 70, eco: 80, inf: 5, cure: 0 });
   const [terminalLogs, setTerminalLogs] = useState([]); 
   const [currentEventId, setCurrentEventId] = useState(null);
+  const [usedEvents, setUsedEvents] = useState([]); 
+  const [activeChoices, setActiveChoices] = useState([]); 
+  
   const [input, setInput] = useState("");
-
-  // Refs
   const terminalRef = useRef(null);
   const audioRef = useRef({ bgm: null, type: null });
 
-  // --- AUDIO SETUP ---
+  // --- AUDIO HELPER ---
+  const playTypeSound = () => {
+    const sfx = audioRef.current.type;
+    if (sfx) { sfx.currentTime = 0; sfx.play().catch(() => {}); }
+  };
+
+  const handleScroll = () => {
+    if (terminalRef.current) {
+        terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+    }
+  };
+
+  // --- SETUP ---
   useEffect(() => {
-    // Grab audio elements
     audioRef.current.bgm = document.getElementById('bgm');
     audioRef.current.type = document.getElementById('sfx-typewriter');
   }, []);
 
-  const playTypeSound = () => {
-    const sfx = audioRef.current.type;
-    if (sfx) {
-       // Reset and play to handle rapid typing
-       sfx.currentTime = 0;
-       sfx.play().catch(() => {}); 
-    }
-  };
-
-  // --- BOOT SEQUENCE (Required for Audio Policy) ---
   const bootSystem = () => {
     setBooted(true);
-    // Start Intro Typing
     startIntroTyping();
   };
 
-  // --- INTRO TYPING LOGIC ---
   const [introTextDisplay, setIntroTextDisplay] = useState("");
-  
   const startIntroTyping = () => {
     let fullText = INTRO_PART_1 + INTRO_PART_2;
     let i = 0;
-    
     const interval = setInterval(() => {
       setIntroTextDisplay(fullText.substring(0, i+1));
-      playTypeSound(); // Play sound per character
+      playTypeSound();
       i++;
-      
-      if (i === fullText.length) {
-        clearInterval(interval);
-        setIntroStep(1); // Show Initialize Button
-      }
-    }, 40); // Typing speed
+      if (i === fullText.length) { clearInterval(interval); setIntroStep(1); }
+    }, 40);
   };
 
   const startGame = () => {
     setGameStarted(true);
-    // Start BGM
-    if (audioRef.current.bgm) {
-        audioRef.current.bgm.volume = 0.4;
-        audioRef.current.bgm.play().catch(() => {});
-    }
-    // Fetch Day 1
+    if (audioRef.current.bgm) { audioRef.current.bgm.volume = 0.4; audioRef.current.bgm.play().catch(() => {}); }
     processTurn(null, true);
   };
 
-  // --- GAMEPLAY ENGINE ---
+  // --- ENGINE ---
   const processTurn = async (choiceIndex = null, isInit = false) => {
     if (loading) return;
     setLoading(true);
 
-    // 1. Log User Selection (Stable visual)
     if (choiceIndex !== null) {
-      // Find the text of the choice they made from the previous log
-      // (This logic assumes the last log entry contained the choices)
-      // Since we clear choices, we just log the action generic or use state if stored
-      setTerminalLogs(prev => [...prev, { text: `>> COMMAND CONFIRMED: OPTION ${choiceIndex + 1}`, type: 'instant' }]);
+        setTerminalLogs(prev => [...prev, { text: `>> OPTION ${choiceIndex + 1} SELECTED`, type: 'instant' }]);
+        setActiveChoices([]); 
     }
 
     try {
-      // 2. API Call
       const res = await fetch('/api/simulate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -97,6 +135,7 @@ export default function Home() {
             stats,
             choice_index: choiceIndex,
             last_event_id: currentEventId,
+            used_events: usedEvents,
             is_init: isInit
         }),
       });
@@ -104,17 +143,16 @@ export default function Home() {
       if (!res.ok) throw new Error("Connection Failed");
       const data = await res.json();
 
-      // 3. Update State
       setStats(data.stats);
       setCurrentEventId(data.event_id);
+      setUsedEvents(data.used_events);
+      setActiveChoices(data.choices);
       
-      // 4. Update Logs with new Narrative AND Choices
-      // We bundle narrative + choices into one log object to keep them stable
       setTerminalLogs(prev => [
         ...prev, 
         { 
             text: data.narrative, 
-            choices: data.choices, // Store choices inside the log entry
+            choices: data.choices, 
             type: 'typewriter' 
         }
       ]);
@@ -126,70 +164,20 @@ export default function Home() {
   };
 
   const handleInput = () => {
-    // Get the active choices from the *last* log entry
-    const lastLog = terminalLogs[terminalLogs.length - 1];
-    if (!lastLog || !lastLog.choices) return;
+    if (activeChoices.length === 0) return;
 
     const val = parseInt(input);
-    if (!isNaN(val) && val > 0 && val <= lastLog.choices.length) {
-        processTurn(val - 1); // 0-based index
+    if (!isNaN(val) && val > 0 && val <= activeChoices.length) {
+        processTurn(val - 1);
         setInput("");
     } else {
-        // Invalid input visual feedback
         setInput("ERR");
         setTimeout(() => setInput(""), 500);
     }
   };
 
-  // --- RENDER HELPERS ---
-  
-  // Custom Component to handle Typing Effect inside Terminal
-  const TerminalEntry = ({ entry, isLast }) => {
-    const [displayedText, setDisplayedText] = useState(entry.type === 'typewriter' && isLast ? "" : entry.text);
-    const hasRun = useRef(false);
-
-    useEffect(() => {
-        if (entry.type === 'instant' || (entry.type === 'typewriter' && !isLast)) {
-            setDisplayedText(entry.text);
-            return;
-        }
-        if (hasRun.current) return;
-        hasRun.current = true;
-
-        let i = 0;
-        const interval = setInterval(() => {
-            setDisplayedText(entry.text.substring(0, i+1));
-            playTypeSound();
-            terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-            i++;
-            if (i === entry.text.length) clearInterval(interval);
-        }, 15);
-        return () => clearInterval(interval);
-    }, [entry, isLast]);
-
-    return (
-        <div style={{marginBottom: '25px', borderBottom: '1px dashed #333', paddingBottom: '15px'}}>
-            <div style={{whiteSpace: 'pre-wrap', marginBottom: '15px'}}>{displayedText}</div>
-            
-            {/* Stable Choice List: Only show if this is the latest log */}
-            {entry.choices && (
-                <div style={{color: '#fff'}}>
-                   {entry.choices.map((c, idx) => (
-                       <div key={idx} style={{marginBottom: '8px'}}>
-                           <span style={{color: '#4af626'}}>[{idx+1}]</span> {c.text}
-                       </div>
-                   ))} 
-                </div>
-            )}
-        </div>
-    );
-  };
-
-  // --- RENDER MAIN ---
   return (
     <main className="container">
-      
-      {/* 1. BOOT & INTRO SCREEN */}
       {!gameStarted && (
         <div style={{
             position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
@@ -206,66 +194,53 @@ export default function Home() {
             ) : (
                 <>
                     <div className="intro-container">
-                        {/* Logic to highlight the second part */}
                         {introTextDisplay.includes(INTRO_PART_2) ? (
                             <>
                                 {INTRO_PART_1}
                                 <span className="intro-highlight cursor">{INTRO_PART_2}</span>
                             </>
-                        ) : (
-                             <span className="cursor">{introTextDisplay}</span>
-                        )}
+                        ) : <span className="cursor">{introTextDisplay}</span>}
                     </div>
-
-                    <button 
-                        onClick={startGame}
-                        style={{
-                            opacity: introStep === 1 ? 1 : 0, 
-                            pointerEvents: introStep === 1 ? 'auto' : 'none',
-                            marginTop: '40px', background: '#4af626', color: '#000',
-                            padding: '15px 50px', fontSize: '1.2rem', fontWeight: 'bold',
-                            border: 'none', cursor: 'pointer', transition: 'opacity 1s',
-                            boxShadow: '0 0 20px #4af626'
-                        }}
-                    >
-                        INITIALIZE PROTOCOLS
-                    </button>
+                    <button onClick={startGame} style={{
+                        opacity: introStep === 1 ? 1 : 0, pointerEvents: introStep === 1 ? 'auto' : 'none',
+                        marginTop: '40px', background: '#4af626', color: '#000', padding: '15px 50px',
+                        fontSize: '1.2rem', fontWeight: 'bold', border: 'none', cursor: 'pointer',
+                        transition: 'opacity 1s', boxShadow: '0 0 20px #4af626'
+                    }}>INITIALIZE PROTOCOLS</button>
                 </>
             )}
         </div>
       )}
 
-      {/* 2. GAME HUD */}
       <div className="system-header">
         <span>SYS.OP.2025</span>
-        <span style={{animation: 'blink 2s infinite'}}>CONNECTED</span>
+        <span style={{animation: 'blink 2s infinite'}}>CONNECTED // DAY {stats.day}</span>
       </div>
 
-      {/* 3. TERMINAL LOGS */}
       <div className="terminal" ref={terminalRef}>
         {terminalLogs.map((log, i) => (
-            <TerminalEntry key={i} entry={log} isLast={i === terminalLogs.length - 1} />
+            <TerminalEntry 
+                key={i} 
+                entry={log} 
+                isLast={i === terminalLogs.length - 1} 
+                onType={playTypeSound}
+                onScroll={handleScroll}
+            />
         ))}
-        {loading && <div className="cursor">CALCULATING PROJECTIONS...</div>}
+        {loading && <div className="cursor">CALCULATING...</div>}
       </div>
 
-      {/* 4. INPUT */}
       <div className="input-row">
         <input 
-          type="number" 
-          placeholder=">> ENTER OPTION ID" 
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
+          type="number" placeholder={activeChoices.length > 0 ? ">> ENTER OPTION ID" : ">> PROCESSING..."}
+          value={input} onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleInput()}
-          disabled={loading || !gameStarted}
+          disabled={loading || activeChoices.length === 0}
           autoFocus
         />
-        <button onClick={handleInput} disabled={loading || !gameStarted}>
-          EXECUTE
-        </button>
+        <button onClick={handleInput} disabled={loading || activeChoices.length === 0}>EXECUTE</button>
       </div>
 
-      {/* 5. STATS (GLOWING) */}
       <footer>
         <div className="stat-box">POP:<span className="stat-val">{stats.pop}%</span></div>
         <div className="stat-box">TRUST:<span className="stat-val">{stats.trust}%</span></div>
@@ -274,7 +249,6 @@ export default function Home() {
         <div className="stat-box">CURE:<span className="stat-val">{stats.cure || 0}%</span></div>
       </footer>
       
-      {/* AUDIO ELEMENTS */}
       <audio id="bgm" loop><source src="/Audio/bgm.mp3" type="audio/mpeg" /></audio>
       <audio id="sfx-typewriter"><source src="/Audio/typewriter.mp3" type="audio/mpeg" /></audio>
     </main>
