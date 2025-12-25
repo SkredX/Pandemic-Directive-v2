@@ -238,6 +238,9 @@ def get_next_event(stats, used_events, forced_next):
 # ==========================================
 # 4. HANDLER (CRASH-PROOF + ONLINE MODE)
 # ==========================================
+# ==========================================
+# 4. HANDLER (FIXED FOR PYMONGO TRUTH VALUE)
+# ==========================================
 class handler(BaseHTTPRequestHandler):
     def do_POST(self):
         try:
@@ -245,8 +248,9 @@ class handler(BaseHTTPRequestHandler):
             data = json.loads(self.rfile.read(l))
             
             # --- LEADERBOARD ---
+            # FIX: Added 'is not None' to prevent "Collection bool()" error
             if data.get('action') == 'get_leaderboard':
-                if DB_STATUS == "ONLINE" and leaderboard_col:
+                if DB_STATUS == "ONLINE" and leaderboard_col is not None:
                     try:
                         scores = list(leaderboard_col.find({}, {'_id': 0}).sort("score", -1).limit(10))
                         self.send_json({"leaderboard": scores})
@@ -257,9 +261,10 @@ class handler(BaseHTTPRequestHandler):
                 return
 
             # --- SUBMIT SCORE ---
+            # FIX: Added 'is not None' here too
             if data.get('action') == 'submit_score':
                 uid = data.get('user_id'); name = data.get('name'); s = data.get('stats'); ending = data.get('ending')
-                if DB_STATUS == "ONLINE" and leaderboard_col and uid:
+                if DB_STATUS == "ONLINE" and leaderboard_col is not None and uid:
                     score = calculate_score(s, ending)
                     exist = leaderboard_col.find_one({"user_id": uid})
                     if not exist or score > exist['score']:
@@ -276,11 +281,11 @@ class handler(BaseHTTPRequestHandler):
             used_events = data.get('used_events', [])
             is_init = data.get('is_init', False)
 
-            # GLOBAL INTEL (Safe Mode)
+            # GLOBAL INTEL
             global_msg = ""
             if DB_STATUS != "ONLINE":
-                pass # Skip global stats if offline
-            elif not is_init and global_choices and last_event_id and choice_idx is not None:
+                pass 
+            elif not is_init and global_choices is not None and last_event_id and choice_idx is not None:
                 try:
                     k = f"{last_event_id}_{choice_idx}"; tk = f"{last_event_id}_total"
                     global_choices.update_one({"_id": k}, {"$inc": {"count": 1}}, upsert=True)
@@ -313,6 +318,20 @@ class handler(BaseHTTPRequestHandler):
             if flavor: text += f"\n\n[AI ANALYSIS]: {flavor}"
 
             self.send_json({"stats": new_stats, "narrative": text, "choices": next_event["choices"], "event_id": next_id, "used_events": used_events})
+
+        except Exception as e:
+            # SAFETY NET
+            err_response = {
+                "stats": {"day":0,"pop":0,"trust":0,"eco":0,"inf":0},
+                "narrative": f"SYSTEM FAILURE RECOVERED: {str(e)}",
+                "choices": [{"text": "REBOOT SEQUENCE", "mods": {}}],
+                "event_id": "error",
+                "used_events": []
+            }
+            self.send_response(200); self.send_header("Content-Type", "application/json"); self.end_headers(); self.wfile.write(json.dumps(err_response).encode())
+
+    def send_json(self, d):
+        self.send_response(200); self.send_header("Content-Type", "application/json"); self.end_headers(); self.wfile.write(json.dumps(d).encode())
 
         except Exception as e:
             # SAFETY NET
