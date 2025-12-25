@@ -2,7 +2,6 @@
 import { useState, useEffect, useRef, memo } from 'react';
 
 // --- HELPER: GENERATE UNIQUE ID ---
-// Fixed to use 'let'/'const' to satisfy Linter
 const generateUUID = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0;
@@ -70,7 +69,6 @@ TerminalEntry.displayName = "TerminalEntry";
 // --- MAIN COMPONENT ---
 export default function Home() {
   const [booted, setBooted] = useState(false);
-  const [loginStep, setLoginStep] = useState(true);
   const [commanderId, setCommanderId] = useState(null);
   const [introStep, setIntroStep] = useState(0);
   const [gameStarted, setGameStarted] = useState(false);
@@ -89,9 +87,11 @@ export default function Home() {
   const terminalRef = useRef(null);
   const audioRef = useRef({ bgm: null });
 
+  // --- INITIALIZATION (Auto-Login) ---
   useEffect(() => {
     audioRef.current.bgm = document.getElementById('bgm');
     
+    // Auto-generate or retrieve ID immediately
     let storedId = localStorage.getItem('commander_id');
     if (!storedId) {
         storedId = generateUUID();
@@ -104,11 +104,6 @@ export default function Home() {
     if (terminalRef.current) {
         terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
     }
-  };
-
-  // Fixed: Removed unused 'mode' parameter to satisfy Linter
-  const handleLogin = () => {
-    setLoginStep(false);
   };
 
   const bootSystem = () => {
@@ -195,7 +190,7 @@ export default function Home() {
       ]);
 
     } catch (error) {
-      setTerminalLogs(prev => [...prev, { text: "ERROR: MAINFRAME DISCONNECTED.", type: 'instant' }]);
+      setTerminalLogs(prev => [...prev, { text: "ERROR: MAINFRAME DISCONNECTED. (Check Database Connection)", type: 'instant' }]);
     }
     setLoading(false);
   };
@@ -249,35 +244,8 @@ export default function Home() {
       stats.inf > 70 || stats.pop < 40 || stats.trust < 20 ? 'critical' : ''
     }`}>
       
-      {loginStep && !booted && (
-         <div style={{
-             position: 'fixed', top:0, left:0, width:'100%', height:'100%', 
-             background:'#000', zIndex:6000, display:'flex', flexDirection:'column', 
-             alignItems:'center', justifyContent:'center'
-         }}>
-            <h1 style={{color:'#4af626', marginBottom:'40px', letterSpacing:'4px', fontSize: '3rem'}}>ZERO HOUR</h1>
-            
-            <button onClick={() => handleLogin()} className="glow-btn" style={{
-                marginBottom:'20px', padding:'15px 40px', background:'#4285F4', 
-                color:'#fff', border:'none', fontSize:'1.2rem', cursor:'pointer', minWidth: '300px'
-            }}>
-                LOGIN WITH GOOGLE ID
-            </button>
-            
-            <button onClick={() => handleLogin()} style={{
-                padding:'15px 40px', background:'transparent', border:'2px solid #4af626', 
-                color:'#4af626', fontSize:'1.2rem', cursor:'pointer', minWidth: '300px'
-            }}>
-                PLAY AS GUEST
-            </button>
-            
-            <div style={{marginTop: '20px', color: '#666', fontFamily: 'monospace'}}>
-                SECURE ID: {commanderId ? commanderId.substring(0,8) : '...'}
-            </div>
-         </div>
-      )}
-
-      {!loginStep && !gameStarted && (
+      {/* 1. BOOT SCREEN (Login removed, straight to boot) */}
+      {!gameStarted && (
         <div style={{
             position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
             background: '#000', zIndex: 5000, display: 'flex', flexDirection: 'column',
