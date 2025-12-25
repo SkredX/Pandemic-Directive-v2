@@ -1,5 +1,6 @@
 import './globals.css';
 import { Share_Tech_Mono } from 'next/font/google';
+import Script from 'next/script'; // Import the Script component
 
 const shareTechMono = Share_Tech_Mono({
   weight: '400',
@@ -21,7 +22,24 @@ export default function RootLayout({ children }) {
           <div className="vignette"></div>
           <div className="noise"></div>
         </div>
+        
         {children}
+
+        {/* --- GOOGLE ANALYTICS START --- */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-4VX7V2CDPB"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-XXXXXXXXXX');
+          `}
+        </Script>
+        {/* --- GOOGLE ANALYTICS END --- */}
       </body>
     </html>
   );
