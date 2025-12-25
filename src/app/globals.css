@@ -126,3 +126,30 @@ footer {
     --text-main: #ff6b6b;
     --accent: #ff2a2a;
 }
+
+/* --- CRT POWER ON ANIMATION --- */
+@keyframes turn-on {
+  0% {
+    transform: scale(1, 0.002) translate3d(0, 0, 0);
+    filter: brightness(30);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+    filter: brightness(30);
+  }
+  40% {
+    transform: scale(1, 0.002) translate3d(0, 0, 0);
+    filter: brightness(20);
+  }
+  100% {
+    transform: scale(1, 1) translate3d(0, 0, 0);
+    filter: brightness(1);
+    opacity: 1;
+  }
+}
+
+.crt-turn-on {
+  animation: turn-on 0.4s cubic-bezier(0.23, 1.00, 0.32, 1.00) forwards;
+  transform-origin: center;
+}
