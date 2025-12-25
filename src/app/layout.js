@@ -36,7 +36,7 @@ export default function RootLayout({ children }) {
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
 
-            gtag('config', 'G-XXXXXXXXXX');
+            gtag('config', 'G-4VX7V2CDPB');
           `}
         </Script>
         {/* --- GOOGLE ANALYTICS END --- */}
