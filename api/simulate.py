@@ -83,41 +83,146 @@ MUTATION_ARC = {
 }
 
 RANDOM_POOL = {
-    "e1": { "text": "SITUATION: OXYGEN LEAK\nMain tank ruptured.", "choices": [{"text": "Divert industrial oxygen.", "mods": {"eco": -5}}, {"text": "Ration oxygen.", "mods": {"pop": -2, "trust": -10}}, {"text": "Import at 300% cost.", "mods": {"eco": -15, "trust": 5}}] },
-    "e2": { "text": "SITUATION: PRISON OUTBREAK", "choices": [{"text": "Release non-violent.", "mods": {"trust": -5}}, {"text": "Lockdown.", "mods": {"trust": -5}}, {"text": "Ignore.", "mods": {"inf": 5}}] },
-    "e3": { "text": "SITUATION: TRANSPORT STRIKE", "choices": [{"text": "Pay them.", "mods": {"eco": -5}}, {"text": "Military drivers.", "mods": {"trust": -5}}, {"text": "Arrest leaders.", "mods": {"trust": -15}}] },
-    "e4": { "text": "SITUATION: CELEBRITY HOAX", "choices": [{"text": "Arrest pop star.", "mods": {"trust": -5}}, {"text": "Ignore.", "mods": {"inf": 5}}, {"text": "Counter-campaign.", "mods": {"eco": -2}}] },
-    "e5": { "text": "SITUATION: BLACK MARKET MEDICINE", "choices": [{"text": "Raids.", "mods": {"trust": -5}}, {"text": "Buy back.", "mods": {"eco": -10}}, {"text": "Legalize.", "mods": {"eco": 5}}] },
-    "e6": { "text": "SITUATION: FOREIGN SPIES", "choices": [{"text": "Execute.", "mods": {"trust": 5}}, {"text": "Trade.", "mods": {"trust": -10}}, {"text": "Double agent.", "mods": {"inf": 2}}] },
-    "e7": { "text": "SITUATION: BANK RUN", "choices": [{"text": "Freeze banks.", "mods": {"trust": -15}}, {"text": "Print money.", "mods": {"eco": -15}}, {"text": "Bailout.", "mods": {"eco": -10}}] },
-    "e8": { "text": "SITUATION: TEACHERS STRIKE", "choices": [{"text": "Close schools.", "mods": {"eco": -5}}, {"text": "Fire them.", "mods": {"trust": -10}}, {"text": "Hybrid classes.", "mods": {"eco": -2}}] },
-    "e9": { "text": "SITUATION: REFUGEES", "choices": [{"text": "Let them in.", "mods": {"inf": 8}}, {"text": "Turn back.", "mods": {"trust": -5}}, {"text": "Camps.", "mods": {"eco": -5}}] },
-    "e10": { "text": "SITUATION: PRICE GOUGING", "choices": [{"text": "Seize stock.", "mods": {"trust": 5}}, {"text": "Free market.", "mods": {"trust": -10}}, {"text": "Subsidize.", "mods": {"eco": -5}}] },
-    "e11": { "text": "SITUATION: RELIGIOUS CULT", "choices": [{"text": "Raid compound.", "mods": {"trust": -10, "pop": -1}}, {"text": "Ignore.", "mods": {"inf": 5}}, {"text": "Negotiate.", "mods": {"trust": 2, "inf": 2}}] },
-    "e12": { "text": "SITUATION: ZOO ANIMALS STARVING", "choices": [{"text": "Feed them.", "mods": {"eco": -2}}, {"text": "Euthanize.", "mods": {"trust": -5}}, {"text": "Release herbivores.", "mods": {"trust": -2}}] },
-    "e13": { "text": "SITUATION: WATER CONTAMINATION", "choices": [{"text": "Fix immediately.", "mods": {"eco": -8}}, {"text": "Ration water.", "mods": {"trust": -10}}, {"text": "Cover up.", "mods": {"pop": -5, "trust": -20}}] },
-    "e14": { "text": "SITUATION: INTERNET BLACKOUT", "choices": [{"text": "Restore grid.", "mods": {"eco": -5}}, {"text": "Prioritize military.", "mods": {"trust": -10}}, {"text": "Blame enemies.", "mods": {"trust": 5, "eco": -2}}] },
-    "e15": { "text": "SITUATION: LOOTING WAVE", "choices": [{"text": "Shoot on sight.", "mods": {"pop": -2, "trust": -20}}, {"text": "Curfew.", "mods": {"eco": -5, "inf": -2}}, {"text": "Ignore.", "mods": {"eco": -10}}] },
-    "e16": { "text": "SITUATION: FARMER PROTEST", "choices": [{"text": "Subsidies.", "mods": {"eco": -5}}, {"text": "Import food.", "mods": {"eco": -10}}, {"text": "Force harvest.", "mods": {"trust": -15}}] },
-    "e17": { "text": "SITUATION: CRUISE SHIP DOCKING", "choices": [{"text": "Allow.", "mods": {"inf": 5, "trust": 5}}, {"text": "Refuse.", "mods": {"trust": -5}}, {"text": "Quarantine offshore.", "mods": {"eco": -5}}] },
-    "e18": { "text": "SITUATION: TRASH PILEUP", "choices": [{"text": "Burn it.", "mods": {"pop": -1}}, {"text": "Army cleanup.", "mods": {"trust": 5, "eco": -2}}, {"text": "Ignore.", "mods": {"trust": -5, "inf": 2}}] },
-    "e19": { "text": "SITUATION: SENATOR SCANDAL", "choices": [{"text": "Resign.", "mods": {"trust": 5}}, {"text": "Cover up.", "mods": {"trust": -15}}, {"text": "Blame media.", "mods": {"trust": -5}}] },
-    "e20": { "text": "SITUATION: CRYPTO CRASH", "choices": [{"text": "Bailout.", "mods": {"eco": -5}}, {"text": "Ignore.", "mods": {"trust": -5}}, {"text": "Investigate.", "mods": {"eco": -2}}] },
-    "e21": { "text": "SITUATION: WILDFIRES", "choices": [{"text": "Evacuate.", "mods": {"inf": 5}}, {"text": "Stay put.", "mods": {"pop": -2}}, {"text": "Cloud seed.", "mods": {"eco": -5}}] },
-    "e22": { "text": "SITUATION: HACKER ATTACK", "choices": [{"text": "Pay ransom.", "mods": {"eco": -10}}, {"text": "Rebuild data.", "mods": {"eco": -5, "trust": -5}}, {"text": "Counter-attack.", "mods": {"eco": -8}}] },
-    "e23": { "text": "SITUATION: OIL SPILL", "choices": [{"text": "Clean up.", "mods": {"eco": -5}}, {"text": "Ignore.", "mods": {"trust": -5}}, {"text": "Burn it.", "mods": {"pop": -1}}] },
-    "e24": { "text": "SITUATION: SPORTING FINALS", "choices": [{"text": "Cancel.", "mods": {"trust": -10, "eco": -5}}, {"text": "Play empty.", "mods": {"eco": -2}}, {"text": "Full crowd.", "mods": {"inf": 10, "eco": 10}}] },
-    "e25": { "text": "SITUATION: ROGUE SCIENTIST", "choices": [{"text": "Use data.", "mods": {"cure": 10, "trust": -10}}, {"text": "Arrest.", "mods": {"trust": 5}}, {"text": "Fund him.", "mods": {"eco": -5, "cure": 5}}] },
-    "e26": { "text": "SITUATION: BORDER WALL", "choices": [{"text": "Reinforce.", "mods": {"eco": -5}}, {"text": "Open gates.", "mods": {"inf": 5}}, {"text": "Drones.", "mods": {"eco": -2}}] },
-    "e27": { "text": "SITUATION: GOLD RESERVES", "choices": [{"text": "Sell.", "mods": {"eco": 10, "trust": -5}}, {"text": "Hold.", "mods": {"trust": 2}}, {"text": "Buy more.", "mods": {"eco": -10}}] },
-    "e28": { "text": "SITUATION: SATELLITE DEBRIS", "choices": [{"text": "Salvage.", "mods": {"eco": 5}}, {"text": "Warn public.", "mods": {"trust": 2}}, {"text": "Secret recovery.", "mods": {"trust": -2}}] },
-    "e29": { "text": "SITUATION: HERBAL REMEDY FAD", "choices": [{"text": "Ban it.", "mods": {"trust": -5}}, {"text": "PSA.", "mods": {"eco": -1}}, {"text": "Tax it.", "mods": {"eco": 2, "pop": -1}}] },
-    "e30": { "text": "SITUATION: ARMY DESERTION", "choices": [{"text": "Court martial.", "mods": {"trust": -10}}, {"text": "Pay bonus.", "mods": {"eco": -5}}, {"text": "Ignore.", "mods": {"trust": -5}}] },
-    "e31": { "text": "SITUATION: GHOST TOWNS", "choices": [{"text": "Burn.", "mods": {"trust": -5}}, {"text": "Seal.", "mods": {"trust": -2}}, {"text": "Loot.", "mods": {"eco": 5, "trust": -10}}] },
-    "e32": { "text": "SITUATION: DATA LEAK", "choices": [{"text": "Deny.", "mods": {"trust": -10}}, {"text": "Apologize.", "mods": {"trust": 5}}, {"text": "Distract.", "mods": {"eco": -5}}] },
-    "e33": { "text": "SITUATION: MASS SUICIDE PACT", "choices": [{"text": "Intervene.", "mods": {"trust": 5}}, {"text": "Ignore.", "mods": {"pop": -1}}, {"text": "Censor news.", "mods": {"trust": -5}}] },
-    "e34": { "text": "SITUATION: CLIMATE PROTEST", "choices": [{"text": "Arrest.", "mods": {"trust": -5}}, {"text": "Listen.", "mods": {"eco": -2}}, {"text": "Ignore.", "mods": {"trust": -2}}] },
-    "e35": { "text": "SITUATION: AI PREDICTION", "choices": [{"text": "Trust AI.", "mods": {"eco": 5, "trust": -5}}, {"text": "Trust Humans.", "mods": {"trust": 5}}, {"text": "Shut it down.", "mods": {"eco": -5}}] }
+    "e1": { 
+        "text": "SITUATION: OXYGEN LEAK\nA critical supply tank at Central Hospital has ruptured. ICU alarms are blaring as pressure drops. Doctors are begging for immediate diversion from the industrial sector.", 
+        "choices": [{"text": "Divert industrial oxygen.", "mods": {"eco": -5}}, {"text": "Ration oxygen (Triage).", "mods": {"pop": -2, "trust": -10}}, {"text": "Import at 300% cost.", "mods": {"eco": -15, "trust": 5}}] 
+    },
+    "e2": { 
+        "text": "SITUATION: PRISON OUTBREAK\nThe virus has breached the Maximum Security Wing of Blackwood Penitentiary. Guards are fleeing, leaving inmates trapped in cells.", 
+        "choices": [{"text": "Release non-violent offenders.", "mods": {"trust": -5, "inf": 2}}, {"text": "Total Lockdown (Leave them).", "mods": {"trust": -5}}, {"text": "Ignore the situation.", "mods": {"inf": 5, "trust": -10}}] 
+    },
+    "e3": { 
+        "text": "SITUATION: TRANSPORT STRIKE\nThe National Truckers Union is refusing to enter infected 'Red Zones' without hazard pay. Food delivery lines are halting.", 
+        "choices": [{"text": "Pay double wages.", "mods": {"eco": -5}}, {"text": "Deploy Military drivers.", "mods": {"trust": -5}}, {"text": "Arrest strike leaders.", "mods": {"trust": -15, "eco": -5}}] 
+    },
+    "e4": { 
+        "text": "SITUATION: CELEBRITY HOAX\nA famous pop star is livestreaming to millions, claiming the virus is '5G radiation' and telling fans to ignore safety protocols.", 
+        "choices": [{"text": "Publicly arrest the star.", "mods": {"trust": -5}}, {"text": "Ignore it.", "mods": {"inf": 5}}, {"text": "Launch counter-campaign.", "mods": {"eco": -2}}] 
+    },
+    "e5": { 
+        "text": "SITUATION: BLACK MARKET MEDICINE\nGangs have raided three pharmacies and are selling stolen ventilators and masks at 10x prices in the slums.", 
+        "choices": [{"text": "Authorized Police Raids.", "mods": {"trust": -5}}, {"text": "Buy back stock anonymously.", "mods": {"eco": -10}}, {"text": "Legalize & Tax sales.", "mods": {"eco": 5, "trust": -10}}] 
+    },
+    "e6": { 
+        "text": "SITUATION: FOREIGN SPIES\nCounter-intelligence caught two foreign agents trying to steal our vaccine research data from the server room.", 
+        "choices": [{"text": "Execute them publicly.", "mods": {"trust": 5, "eco": -5}}, {"text": "Trade them for supplies.", "mods": {"trust": -10, "eco": 5}}, {"text": "Turn them (Double Agents).", "mods": {"inf": 2}}] 
+    },
+    "e7": { 
+        "text": "SITUATION: BANK RUN\nPanic has hit the financial sector. Thousands are lining up at ATMs to withdraw their life savings. The banks are running dry.", 
+        "choices": [{"text": "Freeze all withdrawals.", "mods": {"trust": -15}}, {"text": "Print money to fill ATMs.", "mods": {"eco": -15}}, {"text": "Bailout the banks.", "mods": {"eco": -10, "trust": -5}}] 
+    },
+    "e8": { 
+        "text": "SITUATION: TEACHERS STRIKE\nThe Teachers' Union refuses to return to class, citing unsafe ventilation systems. Parents are unable to work without childcare.", 
+        "choices": [{"text": "Close schools indefinitely.", "mods": {"eco": -5}}, {"text": "Fire striking teachers.", "mods": {"trust": -10}}, {"text": "Invest in hybrid classes.", "mods": {"eco": -2}}] 
+    },
+    "e9": { 
+        "text": "SITUATION: REFUGEES\nA caravan of 5,000 refugees from the collapsed neighboring state has arrived at our border checkpoint, begging for entry.", 
+        "choices": [{"text": "Let them in (Humanitarian).", "mods": {"inf": 8}}, {"text": "Turn them back (Force).", "mods": {"trust": -5}}, {"text": "Build quarantine camps.", "mods": {"eco": -5}}] 
+    },
+    "e10": { 
+        "text": "SITUATION: PRICE GOUGING\nA major pharmaceutical chain has raised the price of fever reducers by 500%. The poor are suffering.", 
+        "choices": [{"text": "Seize the stock.", "mods": {"trust": 5, "eco": -2}}, {"text": "Respect free market.", "mods": {"trust": -10}}, {"text": "Subsidize the cost.", "mods": {"eco": -5}}] 
+    },
+    "e11": { 
+        "text": "SITUATION: RELIGIOUS CULT\nThe 'Order of the Pure' is holding mass prayer gatherings, claiming faith provides immunity. They refuse to disperse.", 
+        "choices": [{"text": "Raid the compound.", "mods": {"trust": -10, "pop": -1}}, {"text": "Ignore them.", "mods": {"inf": 5}}, {"text": "Negotiate with leader.", "mods": {"trust": 2, "inf": 2}}] 
+    },
+    "e12": { 
+        "text": "SITUATION: ZOO ANIMALS STARVING\nSupply lines to the City Zoo have failed. The keepers say the animals will starve within 48 hours.", 
+        "choices": [{"text": "Divert food supplies.", "mods": {"eco": -2}}, {"text": "Euthanize the animals.", "mods": {"trust": -5}}, {"text": "Release herbivores into wild.", "mods": {"trust": -2}}] 
+    },
+    "e13": { 
+        "text": "SITUATION: WATER CONTAMINATION\nA skeleton crew at the water treatment plant missed a filtration cycle. The water is safe to drink, but looks cloudy.", 
+        "choices": [{"text": "Fix immediately (Shutdown).", "mods": {"eco": -8}}, {"text": "Ration water usage.", "mods": {"trust": -10}}, {"text": "Cover it up.", "mods": {"pop": -5, "trust": -20}}] 
+    },
+    "e14": { 
+        "text": "SITUATION: INTERNET BLACKOUT\nA cyber-attack has taken down the internet in the capital. Communication is reverting to radio.", 
+        "choices": [{"text": "Restore civilian grid.", "mods": {"eco": -5}}, {"text": "Prioritize military comms.", "mods": {"trust": -10}}, {"text": "Blame foreign enemies.", "mods": {"trust": 5, "eco": -2}}] 
+    },
+    "e15": { 
+        "text": "SITUATION: LOOTING WAVE\nRiots have broken out in the downtown district. Shop windows are being smashed and stores emptied.", 
+        "choices": [{"text": "Shoot looters on sight.", "mods": {"pop": -2, "trust": -20}}, {"text": "Enforce strict curfew.", "mods": {"eco": -5, "inf": -2}}, {"text": "Let it burn out.", "mods": {"eco": -10}}] 
+    },
+    "e16": { 
+        "text": "SITUATION: FARMER PROTEST\nFarmers are dumping milk and burning crops because processing plants are closed due to infection.", 
+        "choices": [{"text": "Government subsidies.", "mods": {"eco": -5}}, {"text": "Import food instead.", "mods": {"eco": -10}}, {"text": "Force harvest (Draft).", "mods": {"trust": -15}}] 
+    },
+    "e17": { 
+        "text": "SITUATION: CRUISE SHIP DOCKING\nThe 'Azure Star' is off the coast. 3,000 souls on board, 50 confirmed infected. They are running out of food.", 
+        "choices": [{"text": "Allow docking.", "mods": {"inf": 5, "trust": 5}}, {"text": "Refuse entry.", "mods": {"trust": -5}}, {"text": "Quarantine offshore.", "mods": {"eco": -5}}] 
+    },
+    "e18": { 
+        "text": "SITUATION: TRASH PILEUP\nSanitation workers are sick. Garbage is piling up in the streets, attracting rats and secondary diseases.", 
+        "choices": [{"text": "Burn it in the streets.", "mods": {"pop": -1}}, {"text": "Deploy Army engineers.", "mods": {"trust": 5, "eco": -2}}, {"text": "Ignore for now.", "mods": {"trust": -5, "inf": 2}}] 
+    },
+    "e19": { 
+        "text": "SITUATION: SENATOR SCANDAL\nA prominent Senator was caught hosting a lavish dinner party while telling the public to stay home.", 
+        "choices": [{"text": "Force resignation.", "mods": {"trust": 5}}, {"text": "Cover it up.", "mods": {"trust": -15}}, {"text": "Blame the media.", "mods": {"trust": -5}}] 
+    },
+    "e20": { 
+        "text": "SITUATION: CRYPTO CRASH\nThe digital currency market has collapsed, wiping out the savings of the younger demographic.", 
+        "choices": [{"text": "Bailout investors.", "mods": {"eco": -5}}, {"text": "Ignore it.", "mods": {"trust": -5}}, {"text": "Investigate fraud.", "mods": {"eco": -2}}] 
+    },
+    "e21": { 
+        "text": "SITUATION: WILDFIRES\nUnattended campfires have started a blaze near the suburbs. Firefighters are understaffed due to the virus.", 
+        "choices": [{"text": "Evacuate the town.", "mods": {"inf": 5}}, {"text": "Stay put and pray.", "mods": {"pop": -2}}, {"text": "Cloud seeding.", "mods": {"eco": -5}}] 
+    },
+    "e22": { 
+        "text": "SITUATION: HACKER ATTACK\nA group called 'Void' has encrypted our debt records. They demand 50M in Bitcoin.", 
+        "choices": [{"text": "Pay the ransom.", "mods": {"eco": -10}}, {"text": "Rebuild from paper.", "mods": {"eco": -5, "trust": -5}}, {"text": "Launch cyber-counterattack.", "mods": {"eco": -8}}] 
+    },
+    "e23": { 
+        "text": "SITUATION: OIL SPILL\nA tanker has run aground. Oil is coating the beaches, but we lack the manpower to clean it.", 
+        "choices": [{"text": "Divert medical staff to clean.", "mods": {"eco": -5}}, {"text": "Ignore it.", "mods": {"trust": -5}}, {"text": "Burn the slick.", "mods": {"pop": -1}}] 
+    },
+    "e24": { 
+        "text": "SITUATION: SPORTING FINALS\nThe National Championship is scheduled for tomorrow. It brings in millions in revenue.", 
+        "choices": [{"text": "Cancel the game.", "mods": {"trust": -10, "eco": -5}}, {"text": "Play in empty stadium.", "mods": {"eco": -2}}, {"text": "Full crowd allowed.", "mods": {"inf": 10, "eco": 10}}] 
+    },
+    "e25": { 
+        "text": "SITUATION: ROGUE SCIENTIST\nDr. Vahlen was caught testing unapproved cures on the homeless. He claims he found a breakthrough.", 
+        "choices": [{"text": "Use his data.", "mods": {"cure": 10, "trust": -10}}, {"text": "Arrest him.", "mods": {"trust": 5}}, {"text": "Secretly fund him.", "mods": {"eco": -5, "cure": 5}}] 
+    },
+    "e26": { 
+        "text": "SITUATION: BORDER WALL\nPanic is causing citizens to try and break *out* of the country into the neighbor state.", 
+        "choices": [{"text": "Reinforce the wall.", "mods": {"eco": -5}}, {"text": "Open the gates.", "mods": {"inf": 5}}, {"text": "Use surveillance drones.", "mods": {"eco": -2}}] 
+    },
+    "e27": { 
+        "text": "SITUATION: GOLD RESERVES\nThe currency is devaluing. Advisors suggest selling national gold to buy foreign medicine.", 
+        "choices": [{"text": "Sell the gold.", "mods": {"eco": 10, "trust": -5}}, {"text": "Hold the gold.", "mods": {"trust": 2}}, {"text": "Buy more gold.", "mods": {"eco": -10}}] 
+    },
+    "e28": { 
+        "text": "SITUATION: SATELLITE DEBRIS\nA defunct spy satellite has crashed into a residential block.", 
+        "choices": [{"text": "Public Salvage op.", "mods": {"eco": 5}}, {"text": "Warn the public of radiation.", "mods": {"trust": 2}}, {"text": "Secret recovery.", "mods": {"trust": -2}}] 
+    },
+    "e29": { 
+        "text": "SITUATION: HERBAL REMEDY FAD\nA rumor says 'Silver Root' cures the virus. People are poisoning themselves with it.", 
+        "choices": [{"text": "Ban the root.", "mods": {"trust": -5}}, {"text": "PSA Campaign.", "mods": {"eco": -1}}, {"text": "Tax the sales.", "mods": {"eco": 2, "pop": -1}}] 
+    },
+    "e30": { 
+        "text": "SITUATION: ARMY DESERTION\nReports indicate 15% of soldiers have abandoned their posts to be with their families.", 
+        "choices": [{"text": "Court martial them.", "mods": {"trust": -10}}, {"text": "Pay retention bonus.", "mods": {"eco": -5}}, {"text": "Ignore it.", "mods": {"trust": -5}}] 
+    },
+    "e31": { 
+        "text": "SITUATION: GHOST TOWNS\nSeveral rural towns report 0% survival. They are empty.", 
+        "choices": [{"text": "Burn the bodies.", "mods": {"trust": -5}}, {"text": "Seal the area.", "mods": {"trust": -2}}, {"text": "Send teams to loot supplies.", "mods": {"eco": 5, "trust": -10}}] 
+    },
+    "e32": { 
+        "text": "SITUATION: DATA LEAK\nOur true infection numbers were leaked. They are double what we told the public.", 
+        "choices": [{"text": "Deny it as fake news.", "mods": {"trust": -10}}, {"text": "Apologize profusely.", "mods": {"trust": 5}}, {"text": "Create a distraction.", "mods": {"eco": -5}}] 
+    },
+    "e33": { 
+        "text": "SITUATION: MASS SUICIDE PACT\nA doomsday cult plans a 'Final Exit' ceremony in the park.", 
+        "choices": [{"text": "Intervene with police.", "mods": {"trust": 5}}, {"text": "Ignore them.", "mods": {"pop": -1}}, {"text": "Censor news coverage.", "mods": {"trust": -5}}] 
+    },
+    "e34": { 
+        "text": "SITUATION: CLIMATE PROTEST\nActivists are blocking the highway, claiming nature is healing due to the virus.", 
+        "choices": [{"text": "Arrest them.", "mods": {"trust": -5}}, {"text": "Listen to demands.", "mods": {"eco": -2}}, {"text": "Ignore.", "mods": {"trust": -2}}] 
+    },
+    "e35": { 
+        "text": "SITUATION: AI PREDICTION\nOur mainframe predicts a 99% chance of collapse unless we cull the infected.", 
+        "choices": [{"text": "Trust AI (Cull).", "mods": {"eco": 5, "trust": -25, "pop": -5}}, {"text": "Trust Humans (Ignore AI).", "mods": {"trust": 5}}, {"text": "Shut down the AI.", "mods": {"eco": -5}}] 
+    }
 }
 
 # ==========================================
