@@ -191,7 +191,9 @@ export default function Home() {
   };
 
   return (
-    <main className="container">
+    <main className={`container ${
+      stats.inf > 70 || stats.pop < 40 || stats.trust < 20 ? 'critical' : ''
+  }`}>
       {!gameStarted && (
         <div style={{
             position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
