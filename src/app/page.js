@@ -193,7 +193,9 @@ export default function Home() {
   return (
     <main className={`container ${
       stats.inf > 70 || stats.pop < 40 || stats.trust < 20 ? 'critical' : ''
-  }`}>
+    }`}>
+      
+      {/* 1. BOOT & INTRO SCREEN */}
       {!gameStarted && (
         <div style={{
             position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
@@ -208,7 +210,7 @@ export default function Home() {
                    BOOT SYSTEM_
                </button>
             ) : (
-                <>
+                <div className="crt-turn-on"> {/* <--- WRAPPER FOR ANIMATION */}
                     <div className="intro-container">
                         {introTextDisplay.includes(INTRO_PART_2) ? (
                             <>
@@ -217,22 +219,28 @@ export default function Home() {
                             </>
                         ) : <span className="cursor">{introTextDisplay}</span>}
                     </div>
+
                     <button onClick={startGame} style={{
-                        opacity: introStep === 1 ? 1 : 0, pointerEvents: introStep === 1 ? 'auto' : 'none',
+                        opacity: introStep === 1 ? 1 : 0, 
+                        pointerEvents: introStep === 1 ? 'auto' : 'none',
                         marginTop: '40px', background: '#4af626', color: '#000', padding: '15px 50px',
                         fontSize: '1.2rem', fontWeight: 'bold', border: 'none', cursor: 'pointer',
                         transition: 'opacity 1s', boxShadow: '0 0 20px #4af626'
-                    }}>INITIALIZE PROTOCOLS</button>
-                </>
+                    }}>
+                        INITIALIZE PROTOCOLS
+                    </button>
+                </div>
             )}
         </div>
       )}
 
+      {/* 2. GAME HUD */}
       <div className="system-header">
         <span>SYS.OP.2025</span>
         <span style={{animation: 'blink 2s infinite'}}>CONNECTED // DAY {stats.day}</span>
       </div>
 
+      {/* 3. TERMINAL LOGS */}
       <div className="terminal" ref={terminalRef}>
         {terminalLogs.map((log, i) => (
             <TerminalEntry 
@@ -245,6 +253,7 @@ export default function Home() {
         {loading && <div className="cursor">CALCULATING...</div>}
       </div>
 
+      {/* 4. INPUT */}
       <div className="input-row">
         <input 
           type="number" placeholder={activeChoices.length > 0 ? ">> ENTER OPTION ID" : ">> PROCESSING..."}
@@ -256,6 +265,7 @@ export default function Home() {
         <button onClick={handleInput} disabled={loading || activeChoices.length === 0}>EXECUTE</button>
       </div>
 
+      {/* 5. STATS */}
       <footer>
         <div className="stat-box">POP:<span className="stat-val">{stats.pop}%</span></div>
         <div className="stat-box">TRUST:<span className="stat-val">{stats.trust}%</span></div>
