@@ -72,7 +72,12 @@ export default function Home() {
   const [commanderId, setCommanderId] = useState(null);
   const [introStep, setIntroStep] = useState(0);
   const [gameStarted, setGameStarted] = useState(false);
-  const [gameEnded, setGameEnded] = useState(false);
+  
+  // Game States
+  const [gameEnded, setGameEnded] = useState(false);     // True when API returns ending
+  const [showingEnding, setShowingEnding] = useState(false); // True while user reads ending
+  const [resetting, setResetting] = useState(false);     // True during screen wipe transition
+  
   const [loading, setLoading] = useState(false);
   const [playerName, setPlayerName] = useState("");
   const [leaderboard, setLeaderboard] = useState([]);
@@ -87,11 +92,10 @@ export default function Home() {
   const terminalRef = useRef(null);
   const audioRef = useRef({ bgm: null });
 
-  // --- INITIALIZATION (Auto-Login) ---
+  // --- INITIALIZATION ---
   useEffect(() => {
     audioRef.current.bgm = document.getElementById('bgm');
     
-    // Auto-generate or retrieve ID immediately
     let storedId = localStorage.getItem('commander_id');
     if (!storedId) {
         storedId = generateUUID();
@@ -135,6 +139,7 @@ export default function Home() {
     processTurn(null, true);
   };
 
+  // --- GAME ENGINE ---
   const processTurn = async (choiceIndex = null, isInit = false) => {
     if (loading) return;
     setLoading(true);
@@ -170,24 +175,36 @@ export default function Home() {
       const data = await res.json();
 
       if (data.event_id && data.event_id.startsWith("ending_")) {
+          // --- ENDING DETECTED ---
           setGameEnded(true);
+          setShowingEnding(true); // User is reading ending
           setStats(data.stats);
           setCurrentEventId(data.event_id);
+          
+          setTerminalLogs(prev => [
+              ...prev,
+              { text: data.narrative, type: 'typewriter' }
+          ]);
+          
+          // Force a "Continue" button
+          setActiveChoices([{text: "INITIATE SYSTEM RESET"}]);
+
       } else {
+          // --- NORMAL TURN ---
           setStats(data.stats);
           setCurrentEventId(data.event_id);
           setUsedEvents(data.used_events);
           setActiveChoices(data.choices);
+          
+          setTerminalLogs(prev => [
+            ...prev, 
+            { 
+                text: data.narrative, 
+                choices: data.choices, 
+                type: 'typewriter' 
+            }
+          ]);
       }
-      
-      setTerminalLogs(prev => [
-        ...prev, 
-        { 
-            text: data.narrative, 
-            choices: data.choices, 
-            type: 'typewriter' 
-        }
-      ]);
 
     } catch (error) {
       setTerminalLogs(prev => [...prev, { text: "ERROR: MAINFRAME DISCONNECTED. (Check Database Connection)", type: 'instant' }]);
@@ -195,6 +212,21 @@ export default function Home() {
     setLoading(false);
   };
 
+  // --- TRANSITION TO LEADERBOARD ---
+  const handleEndingTransition = () => {
+      setLoading(true);
+      setTerminalLogs(prev => [...prev, { text: ">> SYSTEM RESET...", type: 'instant' }]);
+      
+      setTimeout(() => {
+          setTerminalLogs([]); // WIPE SCREEN
+          setShowingEnding(false); // Done reading ending
+          // Now showing registration prompt
+          setTerminalLogs([{ text: "Register your name to see your standings in the Leaderboards.", type: 'typewriter' }]);
+          setLoading(false);
+      }, 800);
+  };
+
+  // --- SUBMIT SCORE ---
   const submitScore = async () => {
     if (!playerName.trim()) return;
     setLoading(true);
@@ -227,6 +259,14 @@ export default function Home() {
   };
 
   const handleInput = () => {
+    // Case 1: Transitioning from Ending -> Leaderboard
+    if (showingEnding) {
+        handleEndingTransition();
+        setInput("");
+        return;
+    }
+
+    // Case 2: Normal Gameplay
     if (activeChoices.length === 0) return;
 
     const val = parseInt(input);
@@ -244,7 +284,7 @@ export default function Home() {
       stats.inf > 70 || stats.pop < 40 || stats.trust < 20 ? 'critical' : ''
     }`}>
       
-      {/* 1. BOOT SCREEN (Login removed, straight to boot) */}
+      {/* 1. BOOT SCREEN */}
       {!gameStarted && (
         <div style={{
             position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
@@ -298,7 +338,8 @@ export default function Home() {
             />
         ))}
         
-        {gameEnded && leaderboard.length > 0 && (
+        {/* LEADERBOARD TABLE */}
+        {leaderboard.length > 0 && (
             <div style={{marginTop: '30px', borderTop: '2px solid #4af626', padding: '20px'}}>
                 <h3 style={{color: '#4af626', textAlign: 'center', marginBottom: '20px'}}>TOP COMMANDERS</h3>
                 <table style={{width: '100%', textAlign: 'left', color: '#fff', borderCollapse: 'collapse'}}>
@@ -330,8 +371,10 @@ export default function Home() {
         {loading && <div className="cursor">PROCESSING...</div>}
       </div>
 
+      {/* INPUT AREA */}
       <div className="input-row">
-        {gameEnded && leaderboard.length === 0 ? (
+        {/* STATE 1: GAME OVER, TRANSITION DONE, SHOW NAME INPUT */}
+        {gameEnded && !showingEnding && leaderboard.length === 0 ? (
             <>
                 <input 
                     type="text" 
@@ -345,17 +388,21 @@ export default function Home() {
                 <button onClick={submitScore} disabled={loading}>SUBMIT</button>
             </>
         ) : (
+            /* STATE 2: GAMEPLAY OR ENDING TRANSITION ("PROCEED") */
             <>
                 <input 
                     type="number" 
-                    placeholder={activeChoices.length > 0 ? ">> ENTER OPTION ID" : ">> PROCESSING..."} 
+                    placeholder={
+                        showingEnding ? ">> PRESS 1 TO RESET" :
+                        activeChoices.length > 0 ? ">> ENTER OPTION ID" : ">> PROCESSING..."
+                    } 
                     value={input} 
                     onChange={(e) => setInput(e.target.value)} 
                     onKeyDown={(e) => e.key === 'Enter' && handleInput()} 
-                    disabled={loading || activeChoices.length === 0 || gameEnded} 
+                    disabled={loading || activeChoices.length === 0} 
                     autoFocus 
                 />
-                <button onClick={handleInput} disabled={loading || activeChoices.length === 0 || gameEnded}>
+                <button onClick={handleInput} disabled={loading || activeChoices.length === 0}>
                     EXECUTE
                 </button>
             </>
