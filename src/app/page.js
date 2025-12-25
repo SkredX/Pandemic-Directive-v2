@@ -72,16 +72,9 @@ export default function Home() {
   const [commanderId, setCommanderId] = useState(null);
   const [introStep, setIntroStep] = useState(0);
   const [gameStarted, setGameStarted] = useState(false);
-  
-  // Game States
-  const [gameEnded, setGameEnded] = useState(false);     // True when API returns ending
-  const [showingEnding, setShowingEnding] = useState(false); // True while user reads ending
-  const [resetting, setResetting] = useState(false);     // True during screen wipe transition
-  
   const [loading, setLoading] = useState(false);
-  const [playerName, setPlayerName] = useState("");
-  const [leaderboard, setLeaderboard] = useState([]);
 
+  // Game Logic State
   const [stats, setStats] = useState({ day: 1, pop: 100, trust: 70, eco: 80, inf: 5, cure: 0 });
   const [terminalLogs, setTerminalLogs] = useState([]); 
   const [currentEventId, setCurrentEventId] = useState(null);
@@ -89,13 +82,19 @@ export default function Home() {
   const [activeChoices, setActiveChoices] = useState([]); 
   const [input, setInput] = useState("");
 
+  // Modal States
+  const [showNameModal, setShowNameModal] = useState(false); // For End Game
+  const [showErrorModal, setShowErrorModal] = useState(false); // For Invalid Input
+  const [endingNarrative, setEndingNarrative] = useState("");
+  const [playerName, setPlayerName] = useState("");
+  const [leaderboard, setLeaderboard] = useState([]);
+
   const terminalRef = useRef(null);
   const audioRef = useRef({ bgm: null });
 
   // --- INITIALIZATION ---
   useEffect(() => {
     audioRef.current.bgm = document.getElementById('bgm');
-    
     let storedId = localStorage.getItem('commander_id');
     if (!storedId) {
         storedId = generateUUID();
@@ -110,10 +109,12 @@ export default function Home() {
     }
   };
 
-  const bootSystem = () => {
-    setBooted(true);
-    startIntroTyping();
+  const playRadio = () => {
+      const sfx = document.getElementById('sfx-radio');
+      if(sfx) { sfx.currentTime = 0; sfx.play().catch(()=>{}); }
   };
+
+  const bootSystem = () => { setBooted(true); startIntroTyping(); };
 
   const [introTextDisplay, setIntroTextDisplay] = useState("");
   const startIntroTyping = () => {
@@ -125,11 +126,7 @@ export default function Home() {
     const interval = setInterval(() => {
       setIntroTextDisplay(fullText.substring(0, i+1));
       i++;
-      if (i === fullText.length) { 
-          clearInterval(interval); 
-          setIntroStep(1); 
-          if (sfx) sfx.pause();
-      }
+      if (i === fullText.length) { clearInterval(interval); setIntroStep(1); if (sfx) sfx.pause(); }
     }, 40);
   };
 
@@ -146,15 +143,7 @@ export default function Home() {
 
     if (choiceIndex !== null) {
         setTerminalLogs(prev => [...prev, { text: `>> OPTION ${choiceIndex + 1} SELECTED`, type: 'instant' }]);
-        
-        if (typeof window !== 'undefined' && window.gtag) {
-            window.gtag('event', 'player_choice', {
-                event_category: 'gameplay',
-                event_label: `Day ${stats.day} - Option ${choiceIndex + 1}`,
-                value: choiceIndex
-            });
-        }
-        
+        // Google Analytics would go here
         setActiveChoices([]); 
     }
 
@@ -175,20 +164,13 @@ export default function Home() {
       const data = await res.json();
 
       if (data.event_id && data.event_id.startsWith("ending_")) {
-          // --- ENDING DETECTED ---
-          setGameEnded(true);
-          setShowingEnding(true); // User is reading ending
+          // --- END GAME: TRIGGER MODAL ---
           setStats(data.stats);
           setCurrentEventId(data.event_id);
+          setEndingNarrative(data.narrative);
           
-          setTerminalLogs(prev => [
-              ...prev,
-              { text: data.narrative, type: 'typewriter' }
-          ]);
-          
-          // Force a "Continue" button
-          setActiveChoices([{text: "INITIATE SYSTEM RESET"}]);
-
+          playRadio();
+          setShowNameModal(true); // POP-UP APPEARS
       } else {
           // --- NORMAL TURN ---
           setStats(data.stats);
@@ -198,11 +180,7 @@ export default function Home() {
           
           setTerminalLogs(prev => [
             ...prev, 
-            { 
-                text: data.narrative, 
-                choices: data.choices, 
-                type: 'typewriter' 
-            }
+            { text: data.narrative, choices: data.choices, type: 'typewriter' }
           ]);
       }
 
@@ -212,24 +190,16 @@ export default function Home() {
     setLoading(false);
   };
 
-  // --- TRANSITION TO LEADERBOARD ---
-  const handleEndingTransition = () => {
-      setLoading(true);
-      setTerminalLogs(prev => [...prev, { text: ">> SYSTEM RESET...", type: 'instant' }]);
-      
-      setTimeout(() => {
-          setTerminalLogs([]); // WIPE SCREEN
-          setShowingEnding(false); // Done reading ending
-          // Now showing registration prompt
-          setTerminalLogs([{ text: "Register your name to see your standings in the Leaderboards.", type: 'typewriter' }]);
-          setLoading(false);
-      }, 800);
-  };
-
-  // --- SUBMIT SCORE ---
+  // --- SUBMIT SCORE (Called from Modal) ---
   const submitScore = async () => {
     if (!playerName.trim()) return;
     setLoading(true);
+    
+    // Close Modal
+    setShowNameModal(false);
+    
+    // Wipe Terminal for "Fresh" feel
+    setTerminalLogs([{ text: ">> UPLOADING TO ARCHIVES...", type: 'instant' }]);
     
     try {
         await fetch('/api/simulate', {
@@ -243,40 +213,49 @@ export default function Home() {
             })
         });
         
-        setTerminalLogs(prev => [...prev, { text: `>> COMMANDER REGISTERED: ${playerName}`, type: 'instant' }]);
-
+        // Fetch Leaderboard
         const res = await fetch('/api/simulate', {
             method: 'POST',
             body: JSON.stringify({ action: 'get_leaderboard' })
         });
         const data = await res.json();
         setLeaderboard(data.leaderboard);
+        setTerminalLogs([]); // Clear "Uploading..." message
         
     } catch (e) {
-        setTerminalLogs(prev => [...prev, { text: "ERROR: COULD NOT REACH ARCHIVES.", type: 'instant' }]);
+        setTerminalLogs([{ text: "ERROR: COULD NOT REACH ARCHIVES.", type: 'instant' }]);
     }
     setLoading(false);
   };
 
+  // --- INPUT VALIDATOR ---
   const handleInput = () => {
-    // Case 1: Transitioning from Ending -> Leaderboard
-    if (showingEnding) {
-        handleEndingTransition();
-        setInput("");
-        return;
-    }
-
-    // Case 2: Normal Gameplay
     if (activeChoices.length === 0) return;
 
     const val = parseInt(input);
-    if (!isNaN(val) && val > 0 && val <= activeChoices.length) {
-        processTurn(val - 1);
-        setInput("");
-    } else {
-        setInput("ERR");
-        setTimeout(() => setInput(""), 500);
+    
+    // VALIDATION CHECK
+    if (isNaN(val) || val < 1 || val > activeChoices.length) {
+        playRadio();
+        setShowErrorModal(true);
+        return;
     }
+
+    // If valid, proceed
+    processTurn(val - 1);
+    setInput("");
+  };
+
+  // --- STYLE FOR MODALS ---
+  const modalStyle = {
+      position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+      background: 'rgba(0,0,0,0.85)', zIndex: 10000,
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
+  };
+  
+  const boxStyle = {
+      background: '#000', border: '2px solid #4af626', padding: '30px', maxWidth: '500px', width: '90%',
+      textAlign: 'center', boxShadow: '0 0 20px rgba(74, 246, 38, 0.4)'
   };
 
   return (
@@ -284,7 +263,47 @@ export default function Home() {
       stats.inf > 70 || stats.pop < 40 || stats.trust < 20 ? 'critical' : ''
     }`}>
       
-      {/* 1. BOOT SCREEN */}
+      {/* 1. END GAME MODAL */}
+      {showNameModal && (
+          <div style={modalStyle}>
+              <div style={boxStyle}>
+                  <h2 style={{color: '#4af626', borderBottom: '1px solid #333', paddingBottom: '15px', marginBottom: '20px'}}>MISSION REPORT</h2>
+                  <div style={{color: '#fff', whiteSpace: 'pre-wrap', marginBottom: '30px', fontSize: '1.1rem'}}>
+                      {endingNarrative}
+                  </div>
+                  <p style={{color: '#888', marginBottom: '10px', fontSize: '0.9rem'}}>IDENTIFY YOURSELF FOR ARCHIVES:</p>
+                  <input 
+                      type="text" 
+                      placeholder="ENTER NAME" 
+                      value={playerName}
+                      onChange={(e) => setPlayerName(e.target.value)}
+                      style={{background: '#111', border: '1px solid #4af626', color: '#fff', padding: '10px', width: '80%', marginBottom: '20px', fontSize: '1.2rem', textAlign: 'center'}}
+                      autoFocus
+                  />
+                  <br />
+                  <button onClick={submitScore} style={{background: '#4af626', color: '#000', border: 'none', padding: '12px 30px', fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem'}}>
+                      SUBMIT RECORD
+                  </button>
+              </div>
+          </div>
+      )}
+
+      {/* 2. ERROR MODAL (INPUT VALIDATION) */}
+      {showErrorModal && (
+          <div style={modalStyle}>
+              <div style={{...boxStyle, borderColor: 'red', boxShadow: '0 0 20px rgba(255, 0, 0, 0.4)'}}>
+                  <h2 style={{color: 'red', marginBottom: '20px'}}>INVALID PROTOCOL</h2>
+                  <p style={{color: '#fff', marginBottom: '30px'}}>
+                      PLEASE CHOOSE A VALID COMMAND NUMBER (1 - {activeChoices.length}).
+                  </p>
+                  <button onClick={() => setShowErrorModal(false)} style={{background: 'red', color: '#000', border: 'none', padding: '10px 30px', fontWeight: 'bold', cursor: 'pointer'}}>
+                      OKAY
+                  </button>
+              </div>
+          </div>
+      )}
+
+      {/* 3. BOOT SCREEN */}
       {!gameStarted && (
         <div style={{
             position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
@@ -338,7 +357,7 @@ export default function Home() {
             />
         ))}
         
-        {/* LEADERBOARD TABLE */}
+        {/* LEADERBOARD (Appears only after name submission) */}
         {leaderboard.length > 0 && (
             <div style={{marginTop: '30px', borderTop: '2px solid #4af626', padding: '20px'}}>
                 <h3 style={{color: '#4af626', textAlign: 'center', marginBottom: '20px'}}>TOP COMMANDERS</h3>
@@ -365,37 +384,22 @@ export default function Home() {
                         ))}
                     </tbody>
                 </table>
+                <div style={{textAlign: 'center', marginTop: '30px'}}>
+                    <button onClick={() => window.location.reload()} style={{background: 'transparent', border: '1px solid #666', color: '#666', padding: '10px 20px', cursor: 'pointer'}}>REBOOT SYSTEM</button>
+                </div>
             </div>
         )}
         
         {loading && <div className="cursor">PROCESSING...</div>}
       </div>
 
-      {/* INPUT AREA */}
+      {/* INPUT AREA (Only show during gameplay) */}
       <div className="input-row">
-        {/* STATE 1: GAME OVER, TRANSITION DONE, SHOW NAME INPUT */}
-        {gameEnded && !showingEnding && leaderboard.length === 0 ? (
+        {!showNameModal && leaderboard.length === 0 && (
             <>
                 <input 
-                    type="text" 
-                    placeholder=">> ENTER COMMANDER NAME" 
-                    value={playerName} 
-                    onChange={(e) => setPlayerName(e.target.value)} 
-                    onKeyDown={(e) => e.key === 'Enter' && submitScore()}
-                    disabled={loading}
-                    autoFocus 
-                />
-                <button onClick={submitScore} disabled={loading}>SUBMIT</button>
-            </>
-        ) : (
-            /* STATE 2: GAMEPLAY OR ENDING TRANSITION ("PROCEED") */
-            <>
-                <input 
-                    type="number" 
-                    placeholder={
-                        showingEnding ? ">> PRESS 1 TO RESET" :
-                        activeChoices.length > 0 ? ">> ENTER OPTION ID" : ">> PROCESSING..."
-                    } 
+                    type="text" // Changed to text to catch chars like 'A' or '$'
+                    placeholder={activeChoices.length > 0 ? ">> ENTER OPTION ID" : ">> PROCESSING..."} 
                     value={input} 
                     onChange={(e) => setInput(e.target.value)} 
                     onKeyDown={(e) => e.key === 'Enter' && handleInput()} 
@@ -419,6 +423,7 @@ export default function Home() {
       
       <audio id="bgm" loop><source src="/Audio/bgm.mp3" type="audio/mpeg" /></audio>
       <audio id="sfx-typewriter"><source src="/Audio/typewriter.mp3" type="audio/mpeg" /></audio>
+      <audio id="sfx-radio"><source src="/Audio/radio.mp3" type="audio/mpeg" /></audio>
     </main>
   );
 }
