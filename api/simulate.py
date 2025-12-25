@@ -126,39 +126,45 @@ RANDOM_POOL = {
 def run_simulation(current_stats, choice_mods):
     stats = current_stats.copy()
 
-    # Apply choice mods
+    # 1. Apply choice mods
     for k, v in choice_mods.items():
         if k in stats:
             stats[k] = max(0, min(100, stats[k] + v))
 
     stats['day'] = stats.get('day', 1) + 1
 
-    # --- AI VIRUS DECISION ---
-    ai_action = get_virus_action(
-        stats['inf'],
-        stats['trust'],
-        stats.get('cure', 0)
-    )
-
+    # --- 2. AI VIRUS LOGIC (EVERY 5 DAYS ONLY) ---
     narrative_flavor = ""
     r0 = 1.5
+    
+    # Only run AI on Day 5, 10, 15, 20...
+    if stats['day'] % 5 == 0:
+        ai_action = get_virus_action(stats['inf'], stats['trust'], stats.get('cure', 0))
 
-    # Logic: Only show AI Analysis if it changes strategy
-    if ai_action == 1:
-        r0 = 2.5
-        stats['cure'] = min(100, stats.get('cure', 0) + 2)
-        narrative_flavor = "Virus mutates aggressively."
-    elif ai_action == 2:
-        r0 = 0.8
-        stats['trust'] = max(0, stats['trust'] - 2)
-        narrative_flavor = "Virus activity drops unexpectedly."
+        if ai_action == 0:
+            narrative_flavor = "Virus spreading steadily."
+        elif ai_action == 1:
+            # Aggressive Mutation (Bad for User)
+            r0 = 2.8 
+            stats['inf'] += 5
+            narrative_flavor = "CRITICAL: Virus has mutated for aggressive spread."
+        elif ai_action == 2:
+            # Viral Weakness / Dormant (Good for User)
+            r0 = 0.5
+            stats['cure'] = min(100, stats.get('cure', 0) + 5)
+            narrative_flavor = "OPPORTUNITY: Viral genetic structure destabilized. Cure research accelerated."
+    else:
+        # Normal days
+        narrative_flavor = "" 
 
+    # --- 3. MATH & POPULATION FIX ---
     compliance = stats['trust'] / 100.0
     activity = stats['eco'] / 100.0
 
     if stats.get('mutated_strain_active'):
         r0 += 1.0
 
+    # Infection Growth
     r_eff = (r0 * (0.5 + 0.5 * activity)) * (1 - 0.4 * compliance)
     inf = stats['inf']
     growth = (r_eff * inf) - inf
@@ -169,6 +175,21 @@ def run_simulation(current_stats, choice_mods):
     growth += np.random.normal(0, 1.5)
     stats['inf'] = round(max(0, min(100, inf + growth)), 1)
 
+    # POPULATION MORTALITY FIX
+    # Base death rate (0.1%) + High Infection penalty
+    mortality = 0.1
+    if stats['inf'] > 50: mortality += 0.5
+    if stats['inf'] > 80: mortality += 1.5 # Massive die-off at high infection
+    
+    # Healthcare collapse penalty
+    capacity = 40 + (stats['eco'] * 0.2)
+    load = stats['inf'] * 1.2
+    if load > capacity: 
+        mortality += 2.0 # Hospitals full = people die
+        
+    stats['pop'] = round(max(0, stats['pop'] - mortality), 1)
+
+    # Eco Decay
     decay = 0.2 + (0.5 if stats['inf'] > 30 else 0)
     stats['eco'] = round(max(0, stats['eco'] - decay), 1)
 
@@ -179,55 +200,42 @@ def run_simulation(current_stats, choice_mods):
 # ==========================================
 
 def get_next_event(stats, used_events, forced_next):
-    # 1. Forced Next (Sub-plots & Arc Entry)
+    # 1. Forced Next (Sub-plots)
     if forced_next and forced_next in MUTATION_ARC:
-        # Activate Arc Flag
-        if forced_next in ["mut_strategy_focus", "mut_strategy_ignore"]:
+        if forced_next == "mut_treat_1":
             stats['mutated_strain_active'] = True
-            stats['mutated_strain_start_day'] = stats.get('day', 0)
+            stats['mutated_strain_curing'] = True
+        elif forced_next == "mut_ignore":
+            stats['mutated_strain_active'] = True
+            stats['mutated_strain_curing'] = False
         return forced_next, MUTATION_ARC[forced_next]
 
-    # 2. HANDLE MUTATION ARC (If Active)
-    if stats.get('mutated_strain_active'):
-        # Count how many mutation pool events we have played
-        mut_pool_keys = [k for k in MUTATION_ARC.keys() if k.startswith("mut_p")]
-        played_muts = [k for k in used_events if k in mut_pool_keys]
-        
-        # If we have played 5 events, trigger finale
-        if len(played_muts) >= 5:
-            stats['mutated_strain_active'] = False # End Arc
-            # Win/Loss Check logic based on stats
-            if stats.get('cure', 0) > 40 and stats['trust'] > 30:
-                return "mut_finale_win", MUTATION_ARC["mut_finale_win"]
-            else:
-                return "mut_finale_fail", MUTATION_ARC["mut_finale_fail"]
+    # 2. ENDING TRIGGERS (PRIORITY)
+    if stats['inf'] >= 99: return "ending_extinction", {"text": "ENDING: TOTAL INFECTION\nThe virus has consumed the population. Society has collapsed.", "choices": []}
+    if stats['pop'] < 10: return "ending_extinction", {"text": "ENDING: SILENT EARTH\nPopulation collapsed below critical levels.", "choices": []}
+    if stats['trust'] <= 10: return "ending_revolution", {"text": "ENDING: THE GUILLOTINE\nThe military has seized control. You are under arrest.", "choices": []}
+    if stats['eco'] <= 5: return "ending_collapse", {"text": "ENDING: DARK AGES\nEconomy destroyed. Electricity and food distribution failed.", "choices": []}
+    
+    # Victory Trigger
+    if stats.get('cure', 0) >= 95 or (stats['inf'] <= 0 and stats['day'] > 10):
+        return "ending_victory", {"text": "ENDING: VICTORY\nThe virus has been eradicated. Humanity survives.", "choices": []}
 
-        # Otherwise, pick a new mutation event
-        available_muts = [k for k in mut_pool_keys if k not in used_events]
-        if available_muts:
-            eid = random.choice(available_muts)
-            return eid, MUTATION_ARC[eid]
+    # 3. Mutation Arc Trigger
+    if stats['day'] > 15 and "mut_start" not in used_events and random.random() < 0.3:
+        return "mut_start", MUTATION_ARC["mut_start"]
 
-    # 3. Trigger Mutation Arc (Conditions: Day > 15, High Inf, Random)
-    if stats['day'] > 15 and not stats.get('mutated_strain_active') and "mut_start" not in used_events:
-        # 30% chance per day after Day 15
-        if random.random() < 0.3:
-            return "mut_start", MUTATION_ARC["mut_start"]
-
-    # 4. Main Story Arcs (Fixed Days)
+    # 4. Main Story Arcs
     day = stats.get('day', 1)
     if day in STORY_ARCS:
         return f"day_{day}", STORY_ARCS[day]
 
-    # 5. Random Pool (Standard Game)
-    # Filter: Don't repeat events more than twice
+    # 5. Random Pool
     available = [k for k in RANDOM_POOL.keys() if used_events.count(k) < 2]
-    
     if available:
         eid = random.choice(available)
         return eid, RANDOM_POOL[eid]
 
-    # 6. Fallback
+    # Fallback
     return "quiet_day", {
         "text": "STATUS: QUIET DAY\nNo major incidents reported.",
         "choices": [
