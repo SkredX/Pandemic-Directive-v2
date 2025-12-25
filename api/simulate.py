@@ -224,16 +224,13 @@ class handler(BaseHTTPRequestHandler):
             used_events = data.get('used_events', [])
             is_init = data.get('is_init', False)
 
-            global_msg = ""
-            if DB_STATUS != "ONLINE":
-                pass 
-            elif not is_init and global_choices is not None and last_event_id and choice_idx is not None:
+            # GLOBAL INTEL (TRACKING ONLY - SILENT)
+            # We removed the 'global_msg' string logic so it never shows in text.
+            if DB_STATUS == "ONLINE" and not is_init and global_choices is not None and last_event_id and choice_idx is not None:
                 try:
                     k = f"{last_event_id}_{choice_idx}"; tk = f"{last_event_id}_total"
                     global_choices.update_one({"_id": k}, {"$inc": {"count": 1}}, upsert=True)
                     global_choices.update_one({"_id": tk}, {"$inc": {"count": 1}}, upsert=True)
-                    cd = global_choices.find_one({"_id": k}); td = global_choices.find_one({"_id": tk})
-                    if cd and td: pct = int((cd['count'] / td['count']) * 100); global_msg = f"\n[GLOBAL INTEL]: {pct}% of commanders chose this."
                 except: pass
 
             if is_init:
@@ -256,7 +253,7 @@ class handler(BaseHTTPRequestHandler):
                 if next_id != "quiet_day": used_events.append(next_id)
 
             text = next_event["text"]
-            if global_msg: text += global_msg
+            # REMOVED: if global_msg: text += global_msg
             if flavor: text += f"\n\n[AI ANALYSIS]: {flavor}"
 
             self.send_json({"stats": new_stats, "narrative": text, "choices": next_event["choices"], "event_id": next_id, "used_events": used_events})
