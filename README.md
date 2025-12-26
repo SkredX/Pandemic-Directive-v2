@@ -100,7 +100,7 @@ This creates a rubber-band effect, increasing difficulty as the player approache
    - Infection: 100 percent results in human extinction
    - Economy: Required to fund research and infrastructure
    - Cure: Reach 95 percent to achieve victory
-5. Submit your record to the Global Commander Leaderboard at the end of a run
+5. Submit your record to the Global Commander Leaderboard at the end of a run to save your stats and view the top players
 
 ---
 
