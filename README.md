@@ -104,17 +104,6 @@ This creates a rubber-band effect, increasing difficulty as the player approache
 
 ---
 
-## Deployment and Setup
-
-This project is optimized for deployment on Vercel.
-
-1. Fork the repository
-2. Create a free MongoDB Atlas cluster
-3. Import the repository into Vercel
-4. Add the environment variable:
-   - MONGODB_URI (MongoDB connection string)
-5. Deploy
-
 The Python backend builds automatically using Vercel's serverless runtime.
 
 ---
