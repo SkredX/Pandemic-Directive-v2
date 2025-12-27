@@ -73,7 +73,7 @@ STORY_ARCS = {
 MUTATION_ARC = {
     "mut_start": { "text": "CRISIS: MUTATED STRAIN DETECTED\nLaboratories report a new variant 'Omega'.", "choices": [{"text": "Prioritize Omega Strain.", "mods": {"inf": 10, "cure": 5}, "next_fixed": "mut_strategy_focus"}, {"text": "Ignore. Focus on Delta.", "mods": {"inf": 5}, "next_fixed": "mut_strategy_ignore"}] },
     "mut_strategy_focus": { "text": "STRATEGY: OMEGA PROTOCOL\nWe are shifting all resources to the new strain.", "choices": [{"text": "Understood.", "mods": {"inf": 15, "cure": 10}}] },
-    "mut_strategy_ignore": { "text": "STRATEGY: STAY THE COURSE\nWe can't afford to pivot now.", "choices": [{"text": "God help us.", "mods": {"trust": -10, "pop": -2}}] },
+    "mut_strategy_ignore": { "text": "STRATEGY: STAY THE COURSE\nWe can't afford to pivot now.", "choices": [{"text": "Let us focus on the existing strain first.", "mods": {"trust": -10, "pop": -2}}] },
     "mut_finale_win": { "text": "ARC END: THE TIDE TURNS\nOur gamble paid off.", "choices": [{"text": "Excellent.", "mods": {"cure": 25, "inf": -20, "trust": 10}}] },
     "mut_finale_fail": { "text": "ARC END: TOTAL COLLAPSE\nOmega has overwhelmed us.", "choices": [{"text": "It's over.", "mods": {"pop": -10, "trust": -20}}] }
 }
