@@ -10,7 +10,7 @@ const generateUUID = () => {
   });
 };
 
-const INTRO_PART_1 = "Welcome to the command group.\n\nOur nation has just noted a novel infection.\n\nYou are recruited to guide the decision makers.\n\n";
+const INTRO_PART_1 = "Welcome to the command group.\n\nOur nation has just noted a novel infection.\n\nYou are recruited to guide the decision makers.\n\nSimply enter your directive number to guide the government\n\n";
 const INTRO_PART_2 = "Stay prepared to lead from the shadows.";
 
 // --- COMPONENT: TERMINAL ENTRY ---
