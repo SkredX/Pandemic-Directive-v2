@@ -67,7 +67,7 @@ def calculate_score(stats, ending_type):
 # 2. EVENT LIBRARY
 # ==========================================
 STORY_ARCS = {
-    1: { "text": "DAY 1: PATIENT ZERO\nSurveillance satellites detected a bio-anomaly in Sector 4.", "choices": [{"text": "[KAEL] Total Blockade. (Trust -10, Eco -10)", "mods": {"eco": -10, "inf": -5, "trust": -10}}, {"text": "[ARIS] Contact Tracing Team. (Eco -2, Trust +5)", "mods": {"eco": -2, "inf": 5, "trust": 5}}, {"text": "Cover it up to prevent panic. (Trust -5)", "mods": {"inf": 10, "trust": -5}}, {"text": "Request WHO intervention. (Eco -5, Trust +2)", "mods": {"eco": -5, "trust": 2}}] },
+    1: { "text": "DAY 1: PATIENT ZERO\nSurveillance satellites detected a bio-anomaly in Sector 4.", "choices": [{"text": "[KAEL] Total Blockade.", "mods": {"eco": -10, "inf": -5, "trust": -10}}, {"text": "[ARIS] Contact Tracing Team.", "mods": {"eco": -2, "inf": 5, "trust": 5}}, {"text": "Cover it up to prevent panic.", "mods": {"inf": 10, "trust": -5}}, {"text": "Request WHO intervention.", "mods": {"eco": -5, "trust": 2}}] },
     5: { "text": "DAY 5: CONTAINMENT BREACH\nThe virus has crossed state lines.", "choices": [{"text": "Close domestic borders.", "mods": {"eco": -15, "trust": -5}}, {"text": "Screen travelers.", "mods": {"inf": 8, "trust": 5}}, {"text": "Do nothing.", "mods": {"inf": 15, "trust": -10}}] }
 }
 MUTATION_ARC = {
@@ -77,7 +77,7 @@ MUTATION_ARC = {
     "mut_finale_win": { "text": "ARC END: THE TIDE TURNS\nOur gamble paid off.", "choices": [{"text": "Excellent.", "mods": {"cure": 25, "inf": -20, "trust": 10}}] },
     "mut_finale_fail": { "text": "ARC END: TOTAL COLLAPSE\nOmega has overwhelmed us.", "choices": [{"text": "It's over.", "mods": {"pop": -10, "trust": -20}}] }
 }
-for i in range(1, 11): MUTATION_ARC[f"mut_p{i}"] = { "text": f"MUTATION EVENT {i}\nStandard protocols failing.", "choices": [{"text": "Option A", "mods": {"trust": -5}}, {"text": "Option B", "mods": {"eco": -5}}] }
+for i in range(1, 11): MUTATION_ARC[f"mut_p{i}"] = { "text": f"MUTATION EVENT {i}\nStandard protocols failing.", "choices": [{"text": "Implement totalitarianism", "mods": {"trust": -5}}, {"text": "Seek secret international funding", "mods": {"eco": -5}}] }
 
 RANDOM_POOL = {
     "e1": { "text": "SITUATION: OXYGEN LEAK\nA critical supply tank at Central Hospital has ruptured.", "choices": [{"text": "Divert industrial oxygen.", "mods": {"eco": -5}}, {"text": "Ration oxygen.", "mods": {"pop": -2, "trust": -10}}, {"text": "Import at 300% cost.", "mods": {"eco": -15, "trust": 5}}] },
