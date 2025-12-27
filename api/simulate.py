@@ -104,89 +104,174 @@ for i in range(1, 11):
         ] 
     }
 
+
 RANDOM_POOL = {
-    # 1. CURE & RESEARCH (10 Events)
-    "cure_1": { "text": "RESEARCH: AI BREAKTHROUGH\nDeepMind has folded the virus protein structure.", "choices": [{"text": "Mass produce treatment.", "mods": {"cure": 15, "eco": -10}}, {"text": "Verify data first.", "mods": {"cure": 5, "trust": 5}}] },
-    "cure_2": { "text": "RESEARCH: HUMAN TRIALS\n3,000 volunteers are ready to test a risky vaccine.", "choices": [{"text": "Authorize immediately.", "mods": {"cure": 20, "pop": -2}}, {"text": "Wait for safety checks.", "mods": {"cure": 5, "trust": 2}}] },
+    # 1. CURE & RESEARCH (30 Events) - The path to victory
+    "cure_1": { "text": "RESEARCH: AI FOLDING\nDeepMind has simulated the viral protein structure.", "choices": [{"text": "Mass produce results.", "mods": {"cure": 15, "eco": -10}}, {"text": "Verify data first.", "mods": {"cure": 5, "trust": 5}}] },
+    "cure_2": { "text": "RESEARCH: HUMAN TRIALS\n3,000 volunteers ready for risky vaccine testing.", "choices": [{"text": "Authorize immediately.", "mods": {"cure": 20, "pop": -2}}, {"text": "Wait for safety checks.", "mods": {"cure": 5, "trust": 2}}] },
     "cure_3": { "text": "RESEARCH: ROGUE DATA\nHackers stole vaccine data from a rival nation.", "choices": [{"text": "Use the stolen data.", "mods": {"cure": 12, "trust": -5}}, {"text": "Delete it.", "mods": {"trust": 5}}] },
-    "cure_4": { "text": "RESEARCH: GLOBAL SUMMIT\nWorld scientists want to merge databases.", "choices": [{"text": "Share all intel.", "mods": {"cure": 10, "trust": 5}}, {"text": "Keep our secrets.", "mods": {"trust": -5, "eco": 5}}] },
-    "cure_5": { "text": "RESEARCH: IMMUNITY GENE\nWe found a survivor with natural immunity.", "choices": [{"text": "Aggressive extraction.", "mods": {"cure": 15, "trust": -10}}, {"text": "Pay for blood samples.", "mods": {"cure": 8, "eco": -2}}] },
-    "cure_6": { "text": "RESEARCH: FUNGAL COMPOUND\nA rare fungus shows anti-viral properties.", "choices": [{"text": "Strip mine the forest.", "mods": {"cure": 10, "eco": -10}}, {"text": "Synthesize slowly.", "mods": {"cure": 4, "eco": -2}}] },
-    "cure_7": { "text": "RESEARCH: ALIEN SIGNAL\n(Rare) A signal from space contains a DNA sequence.", "choices": [{"text": "Print the sequence.", "mods": {"cure": 25, "trust": -5}}, {"text": "Delete it.", "mods": {"trust": 5}}] },
-    "cure_8": { "text": "RESEARCH: FAILED STATE\nA collapsed neighbor offers data for food.", "choices": [{"text": "Send food for data.", "mods": {"cure": 10, "eco": -5}}, {"text": "Just take the data.", "mods": {"cure": 10, "trust": -10}}] },
-    "cure_9": { "text": "RESEARCH: CRYO-LAB\nUnfreezing old samples might help.", "choices": [{"text": "Do it.", "mods": {"cure": 5}}, {"text": "Too risky.", "mods": {"trust": 2}}] },
-    "cure_10": { "text": "RESEARCH: MIRACLE CHILD\nA child healed herself overnight.", "choices": [{"text": "Study her.", "mods": {"cure": 15, "trust": -5}}, {"text": "Leave her alone.", "mods": {"trust": 10}}] },
+    "cure_4": { "text": "RESEARCH: GLOBAL SUMMIT\nWorld scientists want to merge databases.", "choices": [{"text": "Share all intel.", "mods": {"cure": 10, "trust": 5}}, {"text": "Keep secrets.", "mods": {"trust": -5, "eco": 5}}] },
+    "cure_5": { "text": "RESEARCH: IMMUNITY GENE\nA survivor in Sector 4 shows natural immunity.", "choices": [{"text": "Aggressive extraction.", "mods": {"cure": 15, "trust": -10}}, {"text": "Pay for samples.", "mods": {"cure": 8, "eco": -2}}] },
+    "cure_6": { "text": "RESEARCH: FUNGAL COMPOUND\nRare fungus shows anti-viral properties.", "choices": [{"text": "Strip mine forest.", "mods": {"cure": 10, "eco": -10}}, {"text": "Synthesize slowly.", "mods": {"cure": 4, "eco": -2}}] },
+    "cure_7": { "text": "RESEARCH: CRYO-LAB\nUnfreezing old 1990s samples might help.", "choices": [{"text": "Do it.", "mods": {"cure": 5}}, {"text": "Too risky.", "mods": {"trust": 2}}] },
+    "cure_8": { "text": "RESEARCH: MIRACLE CHILD\nA child healed herself overnight.", "choices": [{"text": "Study her.", "mods": {"cure": 15, "trust": -5}}, {"text": "Leave her alone.", "mods": {"trust": 10}}] },
+    "cure_9": { "text": "RESEARCH: FAILED STATE\nA collapsed neighbor offers data for food.", "choices": [{"text": "Trade food.", "mods": {"cure": 10, "eco": -5}}, {"text": "Seize data.", "mods": {"cure": 10, "trust": -10}}] },
+    "cure_10": { "text": "RESEARCH: LAB EXPLOSION\nData servers are burning.", "choices": [{"text": "Save the drives.", "mods": {"cure": 5, "pop": -1}}, {"text": "Save the staff.", "mods": {"trust": 5}}] },
+    "cure_11": { "text": "RESEARCH: ANIMAL TEST\nPrimates showing promising antibody response.", "choices": [{"text": "Accelerate testing.", "mods": {"cure": 8, "trust": -2}}, {"text": "Standard protocol.", "mods": {"cure": 3}}] },
+    "cure_12": { "text": "RESEARCH: SYMPTOM BLOCKER\nA drug stops death, but doesn't cure.", "choices": [{"text": "Distribute it.", "mods": {"pop": 2, "inf": 5}}, {"text": "Focus on real cure.", "mods": {"cure": 2}}] },
+    "cure_13": { "text": "RESEARCH: BLACK MARKET\nCartels claim to have a working antiviral.", "choices": [{"text": "Buy a sample.", "mods": {"eco": -5, "cure": 5}}, {"text": "Raid them.", "mods": {"trust": 2}}] },
+    "cure_14": { "text": "RESEARCH: UNIVERSITY NETWORK\nStudents want to use dorm PCs for distributed computing.", "choices": [{"text": "Authorize grid.", "mods": {"cure": 6, "eco": -1}}, {"text": "Security risk.", "mods": {"trust": -2}}] },
+    "cure_15": { "text": "RESEARCH: ANCIENT TEXT\nHistory records a similar plague cure.", "choices": [{"text": "Investigate.", "mods": {"cure": 4}}, {"text": "Ignore myths.", "mods": {}}] },
+    "cure_16": { "text": "RESEARCH: SIDE EFFECTS\nVaccine candidate causes blindness in 1% of cases.", "choices": [{"text": "Acceptable loss.", "mods": {"cure": 15, "trust": -15}}, {"text": "Scrap it.", "mods": {"cure": -5, "trust": 5}}] },
+    "cure_17": { "text": "RESEARCH: WEATHER PATTERNS\nCold slows the virus.", "choices": [{"text": "Cooling infrastructure.", "mods": {"inf": -5, "eco": -5}}, {"text": "Ignore.", "mods": {}}] },
+    "cure_18": { "text": "RESEARCH: BLOOD BANK\nRunning low on plasma for testing.", "choices": [{"text": "Mandatory donation.", "mods": {"cure": 5, "trust": -5}}, {"text": "Paid donation.", "mods": {"cure": 5, "eco": -5}}] },
+    "cure_19": { "text": "RESEARCH: PARASITE\nA parasite seems to eat the virus.", "choices": [{"text": "Infect patients.", "mods": {"cure": 10, "pop": -5}}, {"text": "Study safely.", "mods": {"cure": 2}}] },
+    "cure_20": { "text": "RESEARCH: WHO GRANT\nFunding offered for data access.", "choices": [{"text": "Accept.", "mods": {"eco": 10, "cure": 2}}, {"text": "Deny.", "mods": {"trust": 5}}] },
+    "cure_21": { "text": "RESEARCH: SUPERCOMPUTER\nNeeds 50% of national power grid.", "choices": [{"text": "Divert power.", "mods": {"cure": 12, "trust": -10}}, {"text": "Too expensive.", "mods": {"eco": 2}}] },
+    "cure_22": { "text": "RESEARCH: TWIN STUDY\nIdentical twins show different reactions.", "choices": [{"text": "Deep genetic scan.", "mods": {"cure": 5, "eco": -2}}, {"text": "Ignore.", "mods": {}}] },
+    "cure_23": { "text": "RESEARCH: HERBALIST\nClaims local tea works.", "choices": [{"text": "Test it.", "mods": {"cure": 2, "eco": -1}}, {"text": "Debunk it.", "mods": {"trust": 2}}] },
+    "cure_24": { "text": "RESEARCH: OCEAN VENT\nDeep sea bacteria might help.", "choices": [{"text": "Launch expedition.", "mods": {"cure": 8, "eco": -5}}, {"text": "Focus on land.", "mods": {}}] },
+    "cure_25": { "text": "RESEARCH: RADIATION\nLow level radiation kills the virus surface.", "choices": [{"text": "Irradiate supplies.", "mods": {"inf": -5, "pop": -1}}, {"text": "Unsafe.", "mods": {"trust": 2}}] },
+    "cure_26": { "text": "RESEARCH: NANOBOTS\nExperimental tech available.", "choices": [{"text": "Deploy prototype.", "mods": {"cure": 15, "eco": -15}}, {"text": "Wait for v2.", "mods": {"cure": 2}}] },
+    "cure_27": { "text": "RESEARCH: HIVE MIND\nPattern matching suggests insect behavior.", "choices": [{"text": "Entomologist team.", "mods": {"cure": 6, "eco": -2}}, {"text": "Nonsense.", "mods": {}}] },
+    "cure_28": { "text": "RESEARCH: SLEEP CYCLE\nVirus replicates during REM sleep.", "choices": [{"text": "Wakefulness pills.", "mods": {"inf": -5, "pop": -2}}, {"text": "Ignore.", "mods": {}}] },
+    "cure_29": { "text": "RESEARCH: OXYGEN HYPER-DOSE\nPure oxygen kills it.", "choices": [{"text": "Build O2 bars.", "mods": {"inf": -2, "eco": -5}}, {"text": "Impractical.", "mods": {}}] },
+    "cure_30": { "text": "RESEARCH: THE FINAL KEY\nWe are 90% there. Just need one push.", "choices": [{"text": "All resources.", "mods": {"cure": 10, "eco": -20, "trust": -10}}, {"text": "Stay steady.", "mods": {"cure": 2}}] },
 
-    # 2. INFRASTRUCTURE & DISASTERS (10 Events)
-    "e1": { "text": "SITUATION: OXYGEN LEAK\nICU alarms are blaring.", "choices": [{"text": "Divert industrial oxygen.", "mods": {"eco": -5}}, {"text": "Ration oxygen (Triage).", "mods": {"pop": -5, "trust": -10}}, {"text": "Import at 300% cost.", "mods": {"eco": -15, "trust": 5}}] },
-    "e13": { "text": "SITUATION: WATER CONTAMINATION\nFiltration missed.", "choices": [{"text": "Fix immediately.", "mods": {"eco": -8}}, {"text": "Ration water.", "mods": {"trust": -10}}, {"text": "Cover up.", "mods": {"pop": -5, "trust": -20}}] },
-    "e14": { "text": "SITUATION: INTERNET BLACKOUT\nCyber-attack.", "choices": [{"text": "Restore civilian.", "mods": {"eco": -5}}, {"text": "Prioritize military.", "mods": {"trust": -10}}, {"text": "Blame enemies.", "mods": {"trust": 5, "eco": -2}}] },
-    "e21": { "text": "SITUATION: WILDFIRES\nBlaze near suburbs.", "choices": [{"text": "Evacuate.", "mods": {"inf": 5}}, {"text": "Stay put.", "mods": {"pop": -2}}, {"text": "Cloud seed.", "mods": {"eco": -5}}] },
-    "e23": { "text": "SITUATION: OIL SPILL\nTanker run aground.", "choices": [{"text": "Clean up.", "mods": {"eco": -5}}, {"text": "Ignore.", "mods": {"trust": -5}}, {"text": "Burn it.", "mods": {"pop": -1}}] },
-    "e28": { "text": "SITUATION: SATELLITE DEBRIS\nCrashed in city.", "choices": [{"text": "Salvage.", "mods": {"eco": 5}}, {"text": "Warn public.", "mods": {"trust": 2}}, {"text": "Secret recovery.", "mods": {"trust": -2}}] },
-    "e36": { "text": "SITUATION: NUCLEAR LEAK\nPower plant coolant failure.", "choices": [{"text": "Shutdown plant.", "mods": {"eco": -15}}, {"text": "Vent radiation.", "mods": {"pop": -2, "trust": -10}}, {"text": "Cover up.", "mods": {"pop": -5, "trust": -20}}] },
-    "e37": { "text": "SITUATION: DAM CRACK\nHeavy rains threaten breach.", "choices": [{"text": "Evacuate valley.", "mods": {"eco": -5, "inf": 2}}, {"text": "Emergency repairs.", "mods": {"eco": -10}}, {"text": "Pray.", "mods": {"pop": -5}}] },
-    "e38": { "text": "SITUATION: BRIDGE COLLAPSE\nMain trade route severed.", "choices": [{"text": "Rebuild fast.", "mods": {"eco": -10}}, {"text": "Use ferries.", "mods": {"inf": 5}}, {"text": "Ignore.", "mods": {"eco": -5, "trust": -5}}] },
-    "e39": { "text": "SITUATION: GPS FAILURE\nGlobal navigation down.", "choices": [{"text": "Ground flights.", "mods": {"eco": -5}}, {"text": "Manual navigation.", "mods": {"pop": -1}}, {"text": "Wait it out.", "mods": {"trust": -2}}] },
 
-    # 3. SOCIAL UNREST & CRIME (10 Events)
-    "e2": { "text": "SITUATION: PRISON OUTBREAK\nGuards are fleeing.", "choices": [{"text": "Release non-violent.", "mods": {"trust": -5, "inf": 2}}, {"text": "Total Lockdown.", "mods": {"trust": -5}}, {"text": "Ignore.", "mods": {"inf": 5, "trust": -10}}] },
-    "e15": { "text": "SITUATION: LOOTING WAVE\nRiots downtown.", "choices": [{"text": "Shoot on sight.", "mods": {"pop": -5, "trust": -20}}, {"text": "Curfew.", "mods": {"eco": -5, "inf": -2}}, {"text": "Let it burn.", "mods": {"eco": -10}}] },
-    "e5": { "text": "SITUATION: BLACK MARKET MEDICINE\nGangs selling stolen ventilators.", "choices": [{"text": "Authorized Raids.", "mods": {"trust": -5}}, {"text": "Buy back stock.", "mods": {"eco": -10}}, {"text": "Legalize & Tax.", "mods": {"eco": 5, "trust": -10}}] },
-    "e11": { "text": "SITUATION: RELIGIOUS CULT\nMass gatherings.", "choices": [{"text": "Raid compound.", "mods": {"trust": -10, "pop": -1}}, {"text": "Ignore.", "mods": {"inf": 5}}, {"text": "Negotiate.", "mods": {"trust": 2, "inf": 2}}] },
-    "e33": { "text": "SITUATION: MASS SUICIDE PACT\nDoomsday cult.", "choices": [{"text": "Intervene.", "mods": {"trust": 5}}, {"text": "Ignore.", "mods": {"pop": -1}}, {"text": "Censor news.", "mods": {"trust": -5}}] },
-    "e40": { "text": "SITUATION: SOCIAL MEDIA CHALLENGE\nKids licking doorknobs.", "choices": [{"text": "Ban app.", "mods": {"trust": -5}}, {"text": "PSA Campaign.", "mods": {"eco": -2}}, {"text": "Arrest influencers.", "mods": {"trust": -2}}] },
-    "e41": { "text": "SITUATION: DIGITAL CULT\nBelieves virus is a simulation.", "choices": [{"text": "Shut down servers.", "mods": {"trust": -5}}, {"text": "Ignore.", "mods": {"inf": 5}}, {"text": "Infiltrate.", "mods": {"trust": 2}}] },
-    "e42": { "text": "SITUATION: VIGILANTE JUSTICE\nCitizens arresting 'infected'.", "choices": [{"text": "Stop them.", "mods": {"trust": -5}}, {"text": "Deputize them.", "mods": {"trust": -15, "inf": -2}}, {"text": "Ignore.", "mods": {"pop": -1}}] },
-    "e43": { "text": "SITUATION: FOOD RIOTS\nSupermarkets empty.", "choices": [{"text": "Ration cards.", "mods": {"trust": -5}}, {"text": "Military distribution.", "mods": {"trust": 5, "eco": -5}}, {"text": "Free market.", "mods": {"pop": -2}}] },
-    "e44": { "text": "SITUATION: SQUATTERS\nOccupying empty luxury hotels.", "choices": [{"text": "Evict force.", "mods": {"trust": -5}}, {"text": "Allow it.", "mods": {"trust": 5, "eco": -5}}, {"text": "Tax them.", "mods": {"eco": 2}}] },
+    # 2. INFRASTRUCTURE & DISASTERS (15 Events)
+    "infra_1": { "text": "SITUATION: OXYGEN LEAK\nHospital supply ruptured.", "choices": [{"text": "Industrial divert.", "mods": {"eco": -5}}, {"text": "Ration (Triage).", "mods": {"pop": -5, "trust": -10}}, {"text": "Import.", "mods": {"eco": -15, "trust": 5}}] },
+    "infra_2": { "text": "SITUATION: WATER CONTAMINATION\nFiltration failure.", "choices": [{"text": "Fix immediately.", "mods": {"eco": -8}}, {"text": "Ration.", "mods": {"trust": -10}}, {"text": "Cover up.", "mods": {"pop": -5, "trust": -20}}] },
+    "infra_3": { "text": "SITUATION: INTERNET BLACKOUT\nCyber-attack.", "choices": [{"text": "Restore civilian.", "mods": {"eco": -5}}, {"text": "Restore military.", "mods": {"trust": -10}}, {"text": "Blame enemies.", "mods": {"trust": 5, "eco": -2}}] },
+    "infra_4": { "text": "SITUATION: WILDFIRES\nSuburbs burning.", "choices": [{"text": "Evacuate.", "mods": {"inf": 5}}, {"text": "Stay put.", "mods": {"pop": -2}}, {"text": "Cloud seed.", "mods": {"eco": -5}}] },
+    "infra_5": { "text": "SITUATION: OIL SPILL\nTanker grounded.", "choices": [{"text": "Clean up.", "mods": {"eco": -5}}, {"text": "Ignore.", "mods": {"trust": -5}}, {"text": "Burn slick.", "mods": {"pop": -1}}] },
+    "infra_6": { "text": "SITUATION: SATELLITE DEBRIS\nCrashed in city.", "choices": [{"text": "Salvage.", "mods": {"eco": 5}}, {"text": "Warn public.", "mods": {"trust": 2}}, {"text": "Secret recovery.", "mods": {"trust": -2}}] },
+    "infra_7": { "text": "SITUATION: NUCLEAR LEAK\nCoolant failure.", "choices": [{"text": "Shutdown.", "mods": {"eco": -15}}, {"text": "Vent radiation.", "mods": {"pop": -2, "trust": -10}}, {"text": "Cover up.", "mods": {"pop": -5, "trust": -20}}] },
+    "infra_8": { "text": "SITUATION: DAM CRACK\nHeavy rains.", "choices": [{"text": "Evacuate valley.", "mods": {"eco": -5, "inf": 2}}, {"text": "Repairs.", "mods": {"eco": -10}}, {"text": "Pray.", "mods": {"pop": -5}}] },
+    "infra_9": { "text": "SITUATION: BRIDGE COLLAPSE\nMain route severed.", "choices": [{"text": "Rebuild.", "mods": {"eco": -10}}, {"text": "Ferries.", "mods": {"inf": 5}}, {"text": "Ignore.", "mods": {"eco": -5, "trust": -5}}] },
+    "infra_10": { "text": "SITUATION: GPS FAILURE\nNav systems down.", "choices": [{"text": "Ground flights.", "mods": {"eco": -5}}, {"text": "Manual nav.", "mods": {"pop": -1}}, {"text": "Wait.", "mods": {"trust": -2}}] },
+    "infra_11": { "text": "SITUATION: SEWAGE BACKUP\nTreatment plant unmanned.", "choices": [{"text": "Deploy army.", "mods": {"trust": 5, "eco": -2}}, {"text": "Ignore.", "mods": {"inf": 5, "pop": -1}}] },
+    "infra_12": { "text": "SITUATION: AIR TRAFFIC\nControllers sick.", "choices": [{"text": "Close airspace.", "mods": {"eco": -10}}, {"text": "Auto-pilot.", "mods": {"pop": -1}}] },
+    "infra_13": { "text": "SITUATION: GARBAGE STRIKE\nRats swarming.", "choices": [{"text": "Burn it.", "mods": {"pop": -1, "inf": -1}}, {"text": "Pay demands.", "mods": {"eco": -5}}] },
+    "infra_14": { "text": "SITUATION: GRID OVERLOAD\nEveryone staying home using AC.", "choices": [{"text": "Rolling blackouts.", "mods": {"trust": -5}}, {"text": "Buy power.", "mods": {"eco": -10}}] },
+    "infra_15": { "text": "SITUATION: SUBWAY FLOOD\nPumps failed.", "choices": [{"text": "Seal stations.", "mods": {"trust": -2}}, {"text": "Pump it out.", "mods": {"eco": -5}}] },
 
-    # 4. POLITICS & ECONOMY (10 Events)
-    "e7": { "text": "SITUATION: BANK RUN\nThousands at ATMs.", "choices": [{"text": "Freeze withdrawals.", "mods": {"trust": -15}}, {"text": "Print money.", "mods": {"eco": -15}}, {"text": "Bailout.", "mods": {"eco": -10, "trust": -5}}] },
-    "e10": { "text": "SITUATION: PRICE GOUGING\nMeds up 500%.", "choices": [{"text": "Seize stock.", "mods": {"trust": 5, "eco": -2}}, {"text": "Free market.", "mods": {"trust": -10}}, {"text": "Subsidize.", "mods": {"eco": -5}}] },
-    "e19": { "text": "SITUATION: SENATOR SCANDAL\nCaught partying.", "choices": [{"text": "Force resignation.", "mods": {"trust": 5}}, {"text": "Cover up.", "mods": {"trust": -15}}, {"text": "Blame media.", "mods": {"trust": -5}}] },
-    "e20": { "text": "SITUATION: CRYPTO CRASH\nEconomy hit.", "choices": [{"text": "Bailout.", "mods": {"eco": -5}}, {"text": "Ignore.", "mods": {"trust": -5}}, {"text": "Investigate.", "mods": {"eco": -2}}] },
-    "e27": { "text": "SITUATION: GOLD RESERVES\nCurrency devaluing.", "choices": [{"text": "Sell gold.", "mods": {"eco": 10, "trust": -5}}, {"text": "Hold.", "mods": {"trust": 2}}, {"text": "Buy more.", "mods": {"eco": -10}}] },
-    "e45": { "text": "SITUATION: ELECTION YEAR\nOpponent demands reopening.", "choices": [{"text": "Delay election.", "mods": {"trust": -20}}, {"text": "Reopen economy.", "mods": {"inf": 10, "eco": 10}}, {"text": "Smear campaign.", "mods": {"trust": -5}}] },
-    "e46": { "text": "SITUATION: TRADE WAR\nAlly tariffs medical supplies.", "choices": [{"text": "Pay tariffs.", "mods": {"eco": -10}}, {"text": "Retaliate.", "mods": {"eco": -5, "trust": 5}}, {"text": "Smuggle.", "mods": {"trust": -5}}] },
-    "e47": { "text": "SITUATION: PENSION FUND\nCollapsed.", "choices": [{"text": "Bailout.", "mods": {"eco": -10}}, {"text": "Cut payouts.", "mods": {"trust": -15}}, {"text": "Ignore.", "mods": {"trust": -10}}] },
-    "e48": { "text": "SITUATION: UNION STRIKE\nGeneral labor stoppage.", "choices": [{"text": "Meet demands.", "mods": {"eco": -10}}, {"text": "Break strike.", "mods": {"trust": -10}}, {"text": "Negotiate.", "mods": {"eco": -2}}] },
-    "e49": { "text": "SITUATION: BILLIONAIRE BUNKER\nRich fleeing tax base.", "choices": [{"text": "Exit tax.", "mods": {"eco": 10, "trust": -5}}, {"text": "Seize assets.", "mods": {"trust": 5, "eco": 5}}, {"text": "Let them go.", "mods": {"eco": -5}}] },
+    # 3. SOCIAL UNREST & CRIME (20 Events)
+    "soc_1": { "text": "SITUATION: PRISON OUTBREAK\nGuards fleeing.", "choices": [{"text": "Release non-violent.", "mods": {"trust": -5, "inf": 2}}, {"text": "Lockdown.", "mods": {"trust": -5}}, {"text": "Ignore.", "mods": {"inf": 5, "trust": -10}}] },
+    "soc_2": { "text": "SITUATION: LOOTING WAVE\nRiots downtown.", "choices": [{"text": "Shoot on sight.", "mods": {"pop": -5, "trust": -20}}, {"text": "Curfew.", "mods": {"eco": -5, "inf": -2}}, {"text": "Let it burn.", "mods": {"eco": -10}}] },
+    "soc_3": { "text": "SITUATION: BLACK MARKET\nStolen meds.", "choices": [{"text": "Raids.", "mods": {"trust": -5}}, {"text": "Buy stock.", "mods": {"eco": -10}}, {"text": "Legalize.", "mods": {"eco": 5, "trust": -10}}] },
+    "soc_4": { "text": "SITUATION: RELIGIOUS CULT\nMass gatherings.", "choices": [{"text": "Raid.", "mods": {"trust": -10, "pop": -1}}, {"text": "Ignore.", "mods": {"inf": 5}}, {"text": "Negotiate.", "mods": {"trust": 2, "inf": 2}}] },
+    "soc_5": { "text": "SITUATION: SUICIDE PACT\nDoomsday cult.", "choices": [{"text": "Intervene.", "mods": {"trust": 5}}, {"text": "Ignore.", "mods": {"pop": -1}}, {"text": "Censor news.", "mods": {"trust": -5}}] },
+    "soc_6": { "text": "SITUATION: TIKTOK CHALLENGE\nLicking doorknobs.", "choices": [{"text": "Ban app.", "mods": {"trust": -5}}, {"text": "PSA.", "mods": {"eco": -2}}, {"text": "Arrest kids.", "mods": {"trust": -2}}] },
+    "soc_7": { "text": "SITUATION: DIGITAL CULT\n'Virus is a sim'.", "choices": [{"text": "Shut down servers.", "mods": {"trust": -5}}, {"text": "Ignore.", "mods": {"inf": 5}}, {"text": "Infiltrate.", "mods": {"trust": 2}}] },
+    "soc_8": { "text": "SITUATION: VIGILANTES\nArresting 'infected'.", "choices": [{"text": "Stop them.", "mods": {"trust": -5}}, {"text": "Deputize them.", "mods": {"trust": -15, "inf": -2}}, {"text": "Ignore.", "mods": {"pop": -1}}] },
+    "soc_9": { "text": "SITUATION: FOOD RIOTS\nEmpty shelves.", "choices": [{"text": "Ration cards.", "mods": {"trust": -5}}, {"text": "Army food drops.", "mods": {"trust": 5, "eco": -5}}, {"text": "Free market.", "mods": {"pop": -2}}] },
+    "soc_10": { "text": "SITUATION: SQUATTERS\nOccupying hotels.", "choices": [{"text": "Evict force.", "mods": {"trust": -5}}, {"text": "Allow it.", "mods": {"trust": 5, "eco": -5}}, {"text": "Tax them.", "mods": {"eco": 2}}] },
+    "soc_11": { "text": "SITUATION: CURFEW BREAKERS\nSpring break party.", "choices": [{"text": "Mass arrest.", "mods": {"trust": -5, "inf": -2}}, {"text": "Water cannons.", "mods": {"trust": -10}}, {"text": "Ignore.", "mods": {"inf": 5}}] },
+    "soc_12": { "text": "SITUATION: MENTAL HEALTH\nSuicide rates up.", "choices": [{"text": "Hotlines.", "mods": {"eco": -2}}, {"text": "Free meds.", "mods": {"eco": -5, "trust": 5}}, {"text": "Ignore.", "mods": {"pop": -1}}] },
+    "soc_13": { "text": "SITUATION: FAKE CURES\nBleach injections.", "choices": [{"text": "Arrest sellers.", "mods": {"trust": 5}}, {"text": "Education.", "mods": {"eco": -2}}, {"text": "Natural selection.", "mods": {"pop": -1}}] },
+    "soc_14": { "text": "SITUATION: CARTEL WAR\nFighting for turf.", "choices": [{"text": "Send army.", "mods": {"pop": -1, "trust": 5}}, {"text": "Let them fight.", "mods": {"pop": -2}}, {"text": "Negotiate.", "mods": {"trust": -10}}] },
+    "soc_15": { "text": "SITUATION: ZOMBIE RUMOR\nPanic over reanimation.", "choices": [{"text": "Show bodies.", "mods": {"trust": -5}}, {"text": "Deny.", "mods": {"trust": 2}}] },
+    "soc_16": { "text": "SITUATION: STOLEN BODIES\nSold for parts.", "choices": [{"text": "Cremation mandate.", "mods": {"trust": -10}}, {"text": "Guard morgues.", "mods": {"eco": -2}}] },
+    "soc_17": { "text": "SITUATION: ORPHAN CRISIS\nParents dead.", "choices": [{"text": "State homes.", "mods": {"eco": -5}}, {"text": "Foster program.", "mods": {"trust": 5}}, {"text": "Street kids.", "mods": {"trust": -5}}] },
+    "soc_18": { "text": "SITUATION: VIP BUNKERS\nRich buying vents.", "choices": [{"text": "Seize vents.", "mods": {"trust": 10, "eco": -5}}, {"text": "Allow it.", "mods": {"trust": -10}}] },
+    "soc_19": { "text": "SITUATION: HATE CRIMES\nBlaming foreigners.", "choices": [{"text": "Strict policing.", "mods": {"trust": -5}}, {"text": "Unity speech.", "mods": {"trust": 2}}] },
+    "soc_20": { "text": "SITUATION: DOCTOR STRIKE\nWant hazard pay.", "choices": [{"text": "Pay them.", "mods": {"eco": -5}}, {"text": "Draft them.", "mods": {"trust": -10}}, {"text": "Replace them.", "mods": {"pop": -2}}] },
 
-    # 5. MISC & WILD CARDS (10 Events)
-    "e4": { "text": "SITUATION: CELEBRITY HOAX\nPop star claims virus is fake.", "choices": [{"text": "Arrest the star.", "mods": {"trust": -5}}, {"text": "Ignore it.", "mods": {"inf": 5}}, {"text": "Counter-campaign.", "mods": {"eco": -2}}] },
-    "e6": { "text": "SITUATION: FOREIGN SPIES\nStealing vaccine data.", "choices": [{"text": "Execute publicly.", "mods": {"trust": 5, "eco": -5}}, {"text": "Trade for supplies.", "mods": {"trust": -10, "eco": 5}}, {"text": "Turn them.", "mods": {"inf": 2}}] },
-    "e12": { "text": "SITUATION: ZOO ANIMALS\nStarving.", "choices": [{"text": "Divert food.", "mods": {"eco": -2}}, {"text": "Euthanize.", "mods": {"trust": -5}}, {"text": "Release.", "mods": {"trust": -2}}] },
-    "e17": { "text": "SITUATION: CRUISE SHIP\nInfected offshore.", "choices": [{"text": "Allow docking.", "mods": {"inf": 5, "trust": 5}}, {"text": "Refuse entry.", "mods": {"trust": -5}}, {"text": "Quarantine offshore.", "mods": {"eco": -5}}] },
-    "e25": { "text": "SITUATION: ROGUE SCIENTIST\nTesting on homeless.", "choices": [{"text": "Use data.", "mods": {"cure": 10, "trust": -10}}, {"text": "Arrest him.", "mods": {"trust": 5}}, {"text": "Secretly fund.", "mods": {"eco": -5, "cure": 5}}] },
-    "e29": { "text": "SITUATION: HERBAL REMEDY FAD\nFake cure rumor.", "choices": [{"text": "Ban it.", "mods": {"trust": -5}}, {"text": "PSA.", "mods": {"eco": -1}}, {"text": "Tax it.", "mods": {"eco": 2, "pop": -1}}] },
-    "e31": { "text": "SITUATION: GHOST TOWNS\n0% survival reported.", "choices": [{"text": "Burn bodies.", "mods": {"trust": -5}}, {"text": "Seal area.", "mods": {"trust": -2}}, {"text": "Loot supplies.", "mods": {"eco": 5, "trust": -10}}] },
-    "e35": { "text": "SITUATION: AI PREDICTION\nPredicts collapse.", "choices": [{"text": "Trust AI (Cull).", "mods": {"eco": 5, "trust": -25, "pop": -5}}, {"text": "Trust Humans.", "mods": {"trust": 5}}, {"text": "Shut down AI.", "mods": {"eco": -5}}] },
-    "e50": { "text": "SITUATION: ANCIENT RUINS\nArtifact found.", "choices": [{"text": "Sell it.", "mods": {"eco": 10}}, {"text": "Museum.", "mods": {"trust": 2}}, {"text": "Cursed?", "mods": {"trust": -2}}] },
-    "e51": { "text": "SITUATION: METEOR SHOWER\nSpectacle distracts public.", "choices": [{"text": "Encourage viewing.", "mods": {"trust": 5, "inf": 2}}, {"text": "Stay inside.", "mods": {"trust": -2}}, {"text": "Ignore.", "mods": {}}] },
+    # 4. POLITICS & ECONOMY (20 Events)
+    "pol_1": { "text": "SITUATION: BANK RUN\nCash shortage.", "choices": [{"text": "Freeze banks.", "mods": {"trust": -15}}, {"text": "Print money.", "mods": {"eco": -15}}, {"text": "Bailout.", "mods": {"eco": -10, "trust": -5}}] },
+    "pol_2": { "text": "SITUATION: PRICE GOUGING\nMeds expensive.", "choices": [{"text": "Seize stock.", "mods": {"trust": 5, "eco": -2}}, {"text": "Free market.", "mods": {"trust": -10}}, {"text": "Subsidize.", "mods": {"eco": -5}}] },
+    "pol_3": { "text": "SITUATION: SENATOR SCANDAL\nParty during lockdown.", "choices": [{"text": "Resign.", "mods": {"trust": 5}}, {"text": "Cover up.", "mods": {"trust": -15}}, {"text": "Blame media.", "mods": {"trust": -5}}] },
+    "pol_4": { "text": "SITUATION: CRYPTO CRASH\nAssets wiped.", "choices": [{"text": "Bailout.", "mods": {"eco": -5}}, {"text": "Ignore.", "mods": {"trust": -5}}, {"text": "Investigate.", "mods": {"eco": -2}}] },
+    "pol_5": { "text": "SITUATION: GOLD RESERVES\nCurrency drop.", "choices": [{"text": "Sell gold.", "mods": {"eco": 10, "trust": -5}}, {"text": "Hold.", "mods": {"trust": 2}}, {"text": "Buy.", "mods": {"eco": -10}}] },
+    "pol_6": { "text": "SITUATION: ELECTION YEAR\nOpponent campaigning.", "choices": [{"text": "Delay election.", "mods": {"trust": -20}}, {"text": "Reopen economy.", "mods": {"inf": 10, "eco": 10}}, {"text": "Smear campaign.", "mods": {"trust": -5}}] },
+    "pol_7": { "text": "SITUATION: TRADE WAR\nTariffs on meds.", "choices": [{"text": "Pay tariffs.", "mods": {"eco": -10}}, {"text": "Retaliate.", "mods": {"eco": -5, "trust": 5}}, {"text": "Smuggle.", "mods": {"trust": -5}}] },
+    "pol_8": { "text": "SITUATION: PENSION FUND\nCollapsed.", "choices": [{"text": "Bailout.", "mods": {"eco": -10}}, {"text": "Cut payouts.", "mods": {"trust": -15}}, {"text": "Ignore.", "mods": {"trust": -10}}] },
+    "pol_9": { "text": "SITUATION: UNION STRIKE\nGeneral stoppage.", "choices": [{"text": "Meet demands.", "mods": {"eco": -10}}, {"text": "Break strike.", "mods": {"trust": -10}}, {"text": "Negotiate.", "mods": {"eco": -2}}] },
+    "pol_10": { "text": "SITUATION: BILLIONAIRE BUNKER\nTax flight.", "choices": [{"text": "Exit tax.", "mods": {"eco": 10, "trust": -5}}, {"text": "Seize assets.", "mods": {"trust": 5, "eco": 5}}, {"text": "Let go.", "mods": {"eco": -5}}] },
+    "pol_11": { "text": "SITUATION: DATA LEAK\nTrue death toll.", "choices": [{"text": "Deny.", "mods": {"trust": -10}}, {"text": "Apologize.", "mods": {"trust": 5}}, {"text": "Distract.", "mods": {"eco": -5}}] },
+    "pol_12": { "text": "SITUATION: ARMY DESERTION\nSoldiers leaving.", "choices": [{"text": "Court martial.", "mods": {"trust": -10}}, {"text": "Bonuses.", "mods": {"eco": -5}}, {"text": "Ignore.", "mods": {"trust": -5}}] },
+    "pol_13": { "text": "SITUATION: UN SANCTIONS\nHuman rights violation.", "choices": [{"text": "Comply.", "mods": {"trust": -5, "eco": -5}}, {"text": "Ignore.", "mods": {"eco": -10}}] },
+    "pol_14": { "text": "SITUATION: NEIGHBOR WAR\nBorder skirmish.", "choices": [{"text": "Defend.", "mods": {"eco": -10, "pop": -2}}, {"text": "Cede land.", "mods": {"trust": -15}}] },
+    "pol_15": { "text": "SITUATION: STOCK MARKET\nFree fall.", "choices": [{"text": "Close market.", "mods": {"trust": -5}}, {"text": "Inject cash.", "mods": {"eco": -10}}, {"text": "Watch.", "mods": {"trust": -2}}] },
+    "pol_16": { "text": "SITUATION: HOUSING CRASH\nMass evictions.", "choices": [{"text": "Freeze rent.", "mods": {"eco": -5, "trust": 5}}, {"text": "Allow evictions.", "mods": {"trust": -10}}] },
+    "pol_17": { "text": "SITUATION: OIL PRICE\nNegative value.", "choices": [{"text": "Buy reserves.", "mods": {"eco": -5}}, {"text": "Subsidy.", "mods": {"eco": -2}}] },
+    "pol_18": { "text": "SITUATION: TECH MONOPOLY\nOffering tracking app.", "choices": [{"text": "Mandate it.", "mods": {"inf": -5, "trust": -10}}, {"text": "Refuse.", "mods": {"inf": 2}}] },
+    "pol_19": { "text": "SITUATION: FARMER SUBSIDY\nDemanding cash.", "choices": [{"text": "Pay.", "mods": {"eco": -5}}, {"text": "Refuse.", "mods": {"trust": -5}}] },
+    "pol_20": { "text": "SITUATION: STATE MEDIA\nJournalists asking questions.", "choices": [{"text": "Censor.", "mods": {"trust": -5}}, {"text": "Answer.", "mods": {"trust": 5, "eco": -2}}] },
+
+    # 5. MISC & WILD CARDS (15 Events)
+    "wild_1": { "text": "SITUATION: CELEBRITY HOAX\nPop star claims fake.", "choices": [{"text": "Arrest.", "mods": {"trust": -5}}, {"text": "Ignore.", "mods": {"inf": 5}}, {"text": "Counter.", "mods": {"eco": -2}}] },
+    "wild_2": { "text": "SITUATION: FOREIGN SPIES\nStealing data.", "choices": [{"text": "Execute.", "mods": {"trust": 5, "eco": -5}}, {"text": "Trade.", "mods": {"trust": -10, "eco": 5}}, {"text": "Turn.", "mods": {"inf": 2}}] },
+    "wild_3": { "text": "SITUATION: ZOO ANIMALS\nStarving.", "choices": [{"text": "Feed.", "mods": {"eco": -2}}, {"text": "Kill.", "mods": {"trust": -5}}, {"text": "Release.", "mods": {"trust": -2}}] },
+    "wild_4": { "text": "SITUATION: CRUISE SHIP\nInfected.", "choices": [{"text": "Dock.", "mods": {"inf": 5}}, {"text": "Refuse.", "mods": {"trust": -5}}, {"text": "Quarantine.", "mods": {"eco": -5}}] },
+    "wild_5": { "text": "SITUATION: ROGUE SCIENTIST\nUnethical tests.", "choices": [{"text": "Use data.", "mods": {"cure": 10, "trust": -10}}, {"text": "Arrest.", "mods": {"trust": 5}}, {"text": "Fund.", "mods": {"eco": -5, "cure": 5}}] },
+    "wild_6": { "text": "SITUATION: HERBAL REMEDY\nFake news.", "choices": [{"text": "Ban.", "mods": {"trust": -5}}, {"text": "PSA.", "mods": {"eco": -1}}, {"text": "Tax.", "mods": {"eco": 2}}] },
+    "wild_7": { "text": "SITUATION: GHOST TOWNS\n0% survival.", "choices": [{"text": "Burn.", "mods": {"trust": -5}}, {"text": "Seal.", "mods": {"trust": -2}}, {"text": "Loot.", "mods": {"eco": 5, "trust": -10}}] },
+    "wild_8": { "text": "SITUATION: AI PREDICTION\nPredicts doom.", "choices": [{"text": "Trust AI (Cull).", "mods": {"eco": 5, "trust": -25, "pop": -5}}, {"text": "Trust Humans.", "mods": {"trust": 5}}, {"text": "Off switch.", "mods": {"eco": -5}}] },
+    "wild_9": { "text": "SITUATION: ANCIENT RUINS\nArtifact found.", "choices": [{"text": "Sell.", "mods": {"eco": 10}}, {"text": "Museum.", "mods": {"trust": 2}}, {"text": "Cursed?", "mods": {"trust": -2}}] },
+    "wild_10": { "text": "SITUATION: METEOR SHOWER\nSpectacle.", "choices": [{"text": "View.", "mods": {"trust": 5, "inf": 2}}, {"text": "Inside.", "mods": {"trust": -2}}, {"text": "Ignore.", "mods": {}}] },
+    "wild_11": { "text": "SITUATION: SOLAR FLARE\nComms glitch.", "choices": [{"text": "Fix.", "mods": {"eco": -2}}, {"text": "Wait.", "mods": {}}] },
+    "wild_12": { "text": "SITUATION: VOLCANO\nAsh cloud.", "choices": [{"text": "Masks.", "mods": {"eco": -2}}, {"text": "Evacuate.", "mods": {"eco": -5, "inf": 2}}] },
+    "wild_13": { "text": "SITUATION: LOCUSTS\nEating crops.", "choices": [{"text": "Pesticide.", "mods": {"eco": -5}}, {"text": "Burn fields.", "mods": {"eco": -10}}, {"text": "Eat them.", "mods": {"pop": -1}}] },
+    "wild_14": { "text": "SITUATION: UFO?\nStrange lights.", "choices": [{"text": "Investigate.", "mods": {"eco": -2}}, {"text": "Ignore.", "mods": {}}] },
+    "wild_15": { "text": "SITUATION: SERIAL KILLER\nTargeting doctors.", "choices": [{"text": "Manhunt.", "mods": {"eco": -5}}, {"text": "Bodyguards.", "mods": {"eco": -2}}] }
 }
 
-# PROCEDURAL GENERATION (Creates 100+ Unique Events)
+# PROCEDURAL GENERATION (Smart & Varied)
 sectors = ["North", "South", "East", "West", "Central", "Industrial", "Slum", "Tech", "Port", "Rural"]
 issues = ["Food Riots", "Power Failure", "Medical Shortage", "Militia Uprising", "Infection Spike", "Water Crisis", "Fire Outbreak", "Supply Raid"]
-flavor_text = ["Command awaits orders.", "Situation critical.", "Locals are panicking.", "Casualties rising."]
+flavor_text = ["Command awaits orders.", "Situation critical.", "Locals are panicking.", "Casualties rising.", "Local government non-responsive."]
 
-for i in range(105):
-    sec = sectors[i % len(sectors)]
-    iss = issues[i % len(issues)]
+# Option Pools (Mix & Match for variety)
+# Choice 1: Proactive / Expensive (Good Trust, Bad Eco)
+opt_1_pool = [
+    ("Send Military Aid.", {"trust": 2, "eco": -3}),
+    ("Dispatch Emergency Crews.", {"trust": 3, "eco": -2}),
+    ("Authorize Relief Funds.", {"trust": 5, "eco": -5}),
+    ("Deploy National Guard.", {"trust": 1, "inf": -1, "eco": -4}),
+    ("Send Medical Drones.", {"cure": 1, "eco": -2})
+]
+
+# Choice 2: Harsh / Effective (Good Inf/Pop control, Bad Trust)
+opt_2_pool = [
+    ("Enforce Quarantine.", {"inf": -2, "pop": -1, "trust": -2}),
+    ("Declare Martial Law.", {"trust": -10, "inf": -5}),
+    ("Seal the District.", {"pop": -2, "trust": -5}),
+    ("Arrest Agitators.", {"trust": -3, "pop": -1}),
+    ("Use Tear Gas.", {"trust": -5, "inf": -1})
+]
+
+# Choice 3: Passive / Negligent (Bad Trust/Pop, Neutral Eco)
+opt_3_pool = [
+    ("Do Nothing.", {"trust": -5, "pop": -2}),
+    ("Focus on Virus (Ignore).", {"cure": 1, "trust": -5, "pop": -1}),
+    ("Let local police handle it.", {"trust": -2}),
+    ("Suppress media coverage.", {"trust": -5, "eco": 1}),
+    ("Wait for reports.", {"pop": -1, "inf": 1})
+]
+
+# Generate 105 unique procedural events (ID: proc_100 to proc_204)
+for i in range(100, 205):
+    sec = random.choice(sectors)
+    iss = random.choice(issues)
     flav = random.choice(flavor_text)
     
-    # Procedurally generate ID and content
+    # Pick random variations for choices
+    c1 = random.choice(opt_1_pool)
+    c2 = random.choice(opt_2_pool)
+    c3 = random.choice(opt_3_pool)
+
     eid = f"proc_{i}"
     RANDOM_POOL[eid] = {
         "text": f"REPORT: {sec} Sector\nAlert: {iss} reported.\n{flav}",
         "choices": [
-            {"text": "Send Military Aid.", "mods": {"trust": 2, "eco": -3}},
-            {"text": "Enforce Quarantine.", "mods": {"inf": -2, "pop": -1, "trust": -2}},
-            {"text": "Do Nothing.", "mods": {"trust": -5, "pop": -2}}
+            {"text": c1[0], "mods": c1[1]},
+            {"text": c2[0], "mods": c2[1]},
+            {"text": c3[0], "mods": c3[1]}
         ]
     }
-
+    
 # ==========================================
 # 3. LOGIC ENGINE
 # ==========================================
@@ -245,7 +330,7 @@ def get_next_event(stats, used_events, forced_next):
     if stats['pop'] < 10: return "ending_extinction", {"text": "ENDING: SILENT EARTH\nPopulation collapsed below critical levels.", "choices": []}
     if stats['trust'] <= 10: return "ending_revolution", {"text": "ENDING: THE GUILLOTINE\nThe military has seized control. You are under arrest.", "choices": []}
     if stats['eco'] <= 5: return "ending_collapse", {"text": "ENDING: DARK AGES\nEconomy destroyed. Electricity and food distribution failed.", "choices": []}
-    if stats.get('cure', 0) >= 95: return "ending_victory", {"text": "ENDING: VICTORY\nThe virus has been eradicated. Humanity survives.", "choices": []}
+    if stats.get('cure', 0) >= 95: return "ending_victory", {"text": "ENDING: VICTORY\nThe virus has been eradicated. Humanity survives. YOU helped us win", "choices": []}
 
     # FORCED / ARC
     if forced_next and forced_next in MUTATION_ARC:
@@ -264,19 +349,31 @@ def get_next_event(stats, used_events, forced_next):
     if stats['day'] > 15 and "mut_start" not in used_events and random.random() < 0.3:
         return "mut_start", MUTATION_ARC["mut_start"]
 
-    # MAIN / RANDOM (Updated for STRICT NO REPETITION)
+    # MAIN STORY
     day = stats.get('day', 1)
     if day in STORY_ARCS: return f"day_{day}", STORY_ARCS[day]
 
-    # Filter: strict "not in used_events"
-    available = [k for k in RANDOM_POOL.keys() if k not in used_events]
+    # RANDOM POOL LOGIC (Updated)
+    # 1. Get all available events that haven't been used 2 times
+    all_available = [k for k in RANDOM_POOL.keys() if used_events.count(k) < 2]
     
-    if available: 
-        eid = random.choice(available)
+    # 2. FILTER: If Day <= 18, BLOCK procedural events (ids starting with 'proc_')
+    if day <= 18:
+        filtered_available = [k for k in all_available if not k.startswith("proc_")]
+    else:
+        filtered_available = all_available
+
+    # 3. Selection
+    if filtered_available: 
+        eid = random.choice(filtered_available)
+        return eid, RANDOM_POOL[eid]
+    
+    # Fallback (If hand-written run out before Day 18, allow procedural)
+    if all_available:
+        eid = random.choice(all_available)
         return eid, RANDOM_POOL[eid]
 
-    # Fallback if we somehow run out of 130 events
-    return "quiet_day", {"text": "STATUS: QUIET DAY\nNo major incidents reported.", "choices": [{"text": "Rest and Reorganize.", "mods": {"trust": 2, "eco": 1}}]}
+    return "quiet_day", {"text": "STATUS: QUIET DAY", "choices": [{"text": "Rest.", "mods": {"trust": 1}}]}
 # ==========================================
 # 4. HANDLER (FINAL)
 # ==========================================
